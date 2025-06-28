@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="ru-RU" prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# profile: http://ogp.me/ns/profile# fb: http://ogp.me/ns/fb#">
+
+<head>
+<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+<link rel="profile" href="http://gmpg.org/xfn/11" />
+<link rel="pingback" href="https://xakep.ru/xmlrpc.php" />
+<meta name="mailru-verification" content="19264888db6819ce" />
+<title>Потрошилка API. Используем Nuclei и кастомные шаблоны для фаззинга OpenAPI &#8212; Хакер</title>
+<meta name='robots' content='max-image-preview:large' />
+<link rel='dns-prefetch' href='//fonts.googleapis.com' />
+<link rel="alternate" type="application/rss+xml" title="Хакер &raquo; Лента" href="https://xakep.ru/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Хакер &raquo; Лента комментариев" href="https://xakep.ru/comments/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Хакер &raquo; Лента комментариев к &laquo;Потрошилка API. Используем Nuclei и кастомные шаблоны для фаззинга OpenAPI&raquo;" href="https://xakep.ru/2024/10/04/nuclei-openapi/feed/" />
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript" >
+   (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+   m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+   ym(88149838, "init", {
+        clickmap:true,
+        trackLinks:true,
+        accurateTrackBounce:true,
+        webvisor:true
+   });
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/88149838" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BR3RNXPV1V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-BR3RNXPV1V');
+</script>
+  <script>
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', "/wp-admin/admin-ajax.php?action=xakep_view&pid=485398", true);
+    xhr.send(null);
+  </script>
+<script type="text/javascript">
+window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/14.0.0\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/14.0.0\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/xakep.ru\/wp-includes\/js\/wp-emoji-release.min.js"}};
+/*! This file is auto-generated */
+!function(e,a,t){var n,r,o,i=a.createElement("canvas"),p=i.getContext&&i.getContext("2d");function s(e,t){var a=String.fromCharCode,e=(p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,e),0,0),i.toDataURL());return p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,t),0,0),e===i.toDataURL()}function c(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(o=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},r=0;r<o.length;r++)t.supports[o[r]]=function(e){if(p&&p.fillText)switch(p.textBaseline="top",p.font="600 32px Arial",e){case"flag":return s([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])?!1:!s([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!s([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]);case"emoji":return!s([129777,127995,8205,129778,127999],[129777,127995,8203,129778,127999])}return!1}(o[r]),t.supports.everything=t.supports.everything&&t.supports[o[r]],"flag"!==o[r]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[o[r]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(e=t.source||{}).concatemoji?c(e.concatemoji):e.wpemoji&&e.twemoji&&(c(e.twemoji),c(e.wpemoji)))}(window,document,window._wpemojiSettings);
+</script>
+<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 0.07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link rel='stylesheet' id='wp-block-library-css' href='https://xakep.ru/wp-includes/css/dist/block-library/style.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='classic-theme-styles-css' href='https://xakep.ru/wp-includes/css/classic-themes.min.css' type='text/css' media='all' />
+<style id='global-styles-inline-css' type='text/css'>
+body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--duotone--dark-grayscale: url('#wp-duotone-dark-grayscale');--wp--preset--duotone--grayscale: url('#wp-duotone-grayscale');--wp--preset--duotone--purple-yellow: url('#wp-duotone-purple-yellow');--wp--preset--duotone--blue-red: url('#wp-duotone-blue-red');--wp--preset--duotone--midnight: url('#wp-duotone-midnight');--wp--preset--duotone--magenta-yellow: url('#wp-duotone-magenta-yellow');--wp--preset--duotone--purple-green: url('#wp-duotone-purple-green');--wp--preset--duotone--blue-orange: url('#wp-duotone-blue-orange');--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;}:where(.is-layout-flex){gap: 0.5em;}body .is-layout-flow > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}body .is-layout-flow > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}body .is-layout-flow > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}body .is-layout-constrained > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}body .is-layout-constrained > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width: var(--wp--style--global--content-size);margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignwide{max-width: var(--wp--style--global--wide-size);}body .is-layout-flex{display: flex;}body .is-layout-flex{flex-wrap: wrap;align-items: center;}body .is-layout-flex > *{margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+.wp-block-navigation a:where(:not(.wp-element-button)){color: inherit;}
+:where(.wp-block-columns.is-layout-flex){gap: 2em;}
+.wp-block-pullquote{font-size: 1.5em;line-height: 1.6;}
+</style>
+<link rel='stylesheet' id='foobox-free-min-css' href='https://xakep.ru/wp-content/plugins/foobox-image-lightbox/free/css/foobox.free.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-polls-css' href='https://xakep.ru/wp-content/plugins/wp-polls/polls-css.css' type='text/css' media='all' />
+<style id='wp-polls-inline-css' type='text/css'>
+.wp-polls .pollbar {
+	margin: 1px;
+	font-size: 6px;
+	line-height: 8px;
+	height: 8px;
+	background: #dd2200;
+	border: 1px solid #dd2200;
+}
+
+</style>
+<link rel='stylesheet' id='wpdiscuz-frontend-css-css' href='https://xakep.ru/wp-content/plugins/wpdiscuz/themes/default/style.css' type='text/css' media='all' />
+<style id='wpdiscuz-frontend-css-inline-css' type='text/css'>
+ #wpdcom .wpd-blog-administrator .wpd-comment-label{color:#ffffff;background-color:#0f0000;border:none}#wpdcom .wpd-blog-administrator .wpd-comment-author, #wpdcom .wpd-blog-administrator .wpd-comment-author a{color:#0f0000}#wpdcom.wpd-layout-1 .wpd-comment .wpd-blog-administrator .wpd-avatar img{border-color:#0f0000}#wpdcom.wpd-layout-2 .wpd-comment.wpd-reply .wpd-comment-wrap.wpd-blog-administrator{border-left:3px solid #0f0000}#wpdcom.wpd-layout-2 .wpd-comment .wpd-blog-administrator .wpd-avatar img{border-bottom-color:#0f0000}#wpdcom.wpd-layout-3 .wpd-blog-administrator .wpd-comment-subheader{border-top:1px dashed #0f0000}#wpdcom.wpd-layout-3 .wpd-reply .wpd-blog-administrator .wpd-comment-right{border-left:1px solid #0f0000}#wpdcom .wpd-blog-author .wpd-comment-label{color:#ffffff;background-color:#d20000;border:none}#wpdcom .wpd-blog-author .wpd-comment-author, #wpdcom .wpd-blog-author .wpd-comment-author a{color:#d20000}#wpdcom.wpd-layout-1 .wpd-comment .wpd-blog-author .wpd-avatar img{border-color:#d20000}#wpdcom.wpd-layout-2 .wpd-comment .wpd-blog-author .wpd-avatar img{border-bottom-color:#d20000}#wpdcom.wpd-layout-3 .wpd-blog-author .wpd-comment-subheader{border-top:1px dashed #d20000}#wpdcom.wpd-layout-3 .wpd-reply .wpd-blog-author .wpd-comment-right{border-left:1px solid #d20000}#wpdcom .wpd-blog-contributor .wpd-comment-label{color:#ffffff;background-color:#d20000;border:none}#wpdcom .wpd-blog-contributor .wpd-comment-author, #wpdcom .wpd-blog-contributor .wpd-comment-author a{color:#d20000}#wpdcom.wpd-layout-1 .wpd-comment .wpd-blog-contributor .wpd-avatar img{border-color:#d20000}#wpdcom.wpd-layout-2 .wpd-comment .wpd-blog-contributor .wpd-avatar img{border-bottom-color:#d20000}#wpdcom.wpd-layout-3 .wpd-blog-contributor .wpd-comment-subheader{border-top:1px dashed #d20000}#wpdcom.wpd-layout-3 .wpd-reply .wpd-blog-contributor .wpd-comment-right{border-left:1px solid #d20000}#wpdcom .wpd-blog-editor .wpd-comment-label{color:#ffffff;background-color:#0f0101;border:none}#wpdcom .wpd-blog-editor .wpd-comment-author, #wpdcom .wpd-blog-editor .wpd-comment-author a{color:#0f0101}#wpdcom.wpd-layout-1 .wpd-comment .wpd-blog-editor .wpd-avatar img{border-color:#0f0101}#wpdcom.wpd-layout-2 .wpd-comment.wpd-reply .wpd-comment-wrap.wpd-blog-editor{border-left:3px solid #0f0101}#wpdcom.wpd-layout-2 .wpd-comment .wpd-blog-editor .wpd-avatar img{border-bottom-color:#0f0101}#wpdcom.wpd-layout-3 .wpd-blog-editor .wpd-comment-subheader{border-top:1px dashed #0f0101}#wpdcom.wpd-layout-3 .wpd-reply .wpd-blog-editor .wpd-comment-right{border-left:1px solid #0f0101}#wpdcom .wpd-blog-subscriber .wpd-comment-label{color:#ffffff;background-color:#d20000;border:none}#wpdcom .wpd-blog-subscriber .wpd-comment-author, #wpdcom .wpd-blog-subscriber .wpd-comment-author a{color:#d20000}#wpdcom.wpd-layout-2 .wpd-comment .wpd-blog-subscriber .wpd-avatar img{border-bottom-color:#d20000}#wpdcom.wpd-layout-3 .wpd-blog-subscriber .wpd-comment-subheader{border-top:1px dashed #d20000}#wpdcom .wpd-blog-newsmaker .wpd-comment-label{color:#ffffff;background-color:#d20000;border:none}#wpdcom .wpd-blog-newsmaker .wpd-comment-author, #wpdcom .wpd-blog-newsmaker .wpd-comment-author a{color:#d20000}#wpdcom.wpd-layout-1 .wpd-comment .wpd-blog-newsmaker .wpd-avatar img{border-color:#d20000}#wpdcom.wpd-layout-2 .wpd-comment .wpd-blog-newsmaker .wpd-avatar img{border-bottom-color:#d20000}#wpdcom.wpd-layout-3 .wpd-blog-newsmaker .wpd-comment-subheader{border-top:1px dashed #d20000}#wpdcom.wpd-layout-3 .wpd-reply .wpd-blog-newsmaker .wpd-comment-right{border-left:1px solid #d20000}#wpdcom .wpd-blog-translator .wpd-comment-label{color:#ffffff;background-color:#d20000;border:none}#wpdcom .wpd-blog-translator .wpd-comment-author, #wpdcom .wpd-blog-translator .wpd-comment-author a{color:#d20000}#wpdcom.wpd-layout-1 .wpd-comment .wpd-blog-translator .wpd-avatar img{border-color:#d20000}#wpdcom.wpd-layout-2 .wpd-comment .wpd-blog-translator .wpd-avatar img{border-bottom-color:#d20000}#wpdcom.wpd-layout-3 .wpd-blog-translator .wpd-comment-subheader{border-top:1px dashed #d20000}#wpdcom.wpd-layout-3 .wpd-reply .wpd-blog-translator .wpd-comment-right{border-left:1px solid #d20000}#wpdcom .wpd-blog-post_author .wpd-comment-label{color:#ffffff;background-color:#dd9933;border:none}#wpdcom .wpd-blog-post_author .wpd-comment-author, #wpdcom .wpd-blog-post_author .wpd-comment-author a{color:#dd9933}#wpdcom .wpd-blog-post_author .wpd-avatar img{border-color:#dd9933}#wpdcom.wpd-layout-1 .wpd-comment .wpd-blog-post_author .wpd-avatar img{border-color:#dd9933}#wpdcom.wpd-layout-2 .wpd-comment.wpd-reply .wpd-comment-wrap.wpd-blog-post_author{border-left:3px solid #dd9933}#wpdcom.wpd-layout-2 .wpd-comment .wpd-blog-post_author .wpd-avatar img{border-bottom-color:#dd9933}#wpdcom.wpd-layout-3 .wpd-blog-post_author .wpd-comment-subheader{border-top:1px dashed #dd9933}#wpdcom.wpd-layout-3 .wpd-reply .wpd-blog-post_author .wpd-comment-right{border-left:1px solid #dd9933}#wpdcom .wpd-blog-guest .wpd-comment-label{color:#ffffff;background-color:#d20000;border:none}#wpdcom .wpd-blog-guest .wpd-comment-author, #wpdcom .wpd-blog-guest .wpd-comment-author a{color:#d20000}#wpdcom.wpd-layout-3 .wpd-blog-guest .wpd-comment-subheader{border-top:1px dashed #d20000}#comments, #respond, .comments-area, #wpdcom{}#wpdcom .ql-editor > *{color:#777777}#wpdcom .ql-editor::before{}#wpdcom .ql-toolbar{border:1px solid #DDDDDD;border-top:none}#wpdcom .ql-container{border:1px solid #DDDDDD;border-bottom:none}#wpdcom .wpd-form-row .wpdiscuz-item input[type="text"], #wpdcom .wpd-form-row .wpdiscuz-item input[type="email"], #wpdcom .wpd-form-row .wpdiscuz-item input[type="url"], #wpdcom .wpd-form-row .wpdiscuz-item input[type="color"], #wpdcom .wpd-form-row .wpdiscuz-item input[type="date"], #wpdcom .wpd-form-row .wpdiscuz-item input[type="datetime"], #wpdcom .wpd-form-row .wpdiscuz-item input[type="datetime-local"], #wpdcom .wpd-form-row .wpdiscuz-item input[type="month"], #wpdcom .wpd-form-row .wpdiscuz-item input[type="number"], #wpdcom .wpd-form-row .wpdiscuz-item input[type="time"], #wpdcom textarea, #wpdcom select{border:1px solid #DDDDDD;color:#777777}#wpdcom .wpd-form-row .wpdiscuz-item textarea{border:1px solid #DDDDDD}#wpdcom input::placeholder, #wpdcom textarea::placeholder, #wpdcom input::-moz-placeholder, #wpdcom textarea::-webkit-input-placeholder{}#wpdcom .wpd-comment-text{color:#777777}#wpdcom .wpd-thread-head .wpd-thread-info{border-bottom:2px solid #d20000}#wpdcom .wpd-thread-head .wpd-thread-info.wpd-reviews-tab svg{fill:#d20000}#wpdcom .wpd-thread-head .wpdiscuz-user-settings{border-bottom:2px solid #d20000}#wpdcom .wpd-thread-head .wpdiscuz-user-settings:hover{color:#d20000}#wpdcom .wpd-comment .wpd-follow-link:hover{color:#d20000}#wpdcom .wpd-comment-status .wpd-sticky{color:#d20000}#wpdcom .wpd-thread-filter .wpdf-active{color:#d20000;border-bottom-color:#d20000}#wpdcom .wpd-comment-info-bar{border:1px dashed #db3333;background:#fbe6e6}#wpdcom .wpd-comment-info-bar .wpd-current-view i{color:#d20000}#wpdcom .wpd-filter-view-all:hover{background:#d20000}#wpdcom .wpdiscuz-item .wpdiscuz-rating > label{color:#DDDDDD}#wpdcom .wpdiscuz-item .wpdiscuz-rating:not(:checked) > label:hover, .wpdiscuz-rating:not(:checked) > label:hover ~ label{}#wpdcom .wpdiscuz-item .wpdiscuz-rating > input ~ label:hover, #wpdcom .wpdiscuz-item .wpdiscuz-rating > input:not(:checked) ~ label:hover ~ label, #wpdcom .wpdiscuz-item .wpdiscuz-rating > input:not(:checked) ~ label:hover ~ label{color:#FFED85}#wpdcom .wpdiscuz-item .wpdiscuz-rating > input:checked ~ label:hover, #wpdcom .wpdiscuz-item .wpdiscuz-rating > input:checked ~ label:hover, #wpdcom .wpdiscuz-item .wpdiscuz-rating > label:hover ~ input:checked ~ label, #wpdcom .wpdiscuz-item .wpdiscuz-rating > input:checked + label:hover ~ label, #wpdcom .wpdiscuz-item .wpdiscuz-rating > input:checked ~ label:hover ~ label, .wpd-custom-field .wcf-active-star, #wpdcom .wpdiscuz-item .wpdiscuz-rating > input:checked ~ label{color:#FFD700}#wpd-post-rating .wpd-rating-wrap .wpd-rating-stars svg .wpd-star{fill:#DDDDDD}#wpd-post-rating .wpd-rating-wrap .wpd-rating-stars svg .wpd-active{fill:#FFD700}#wpd-post-rating .wpd-rating-wrap .wpd-rate-starts svg .wpd-star{fill:#DDDDDD}#wpd-post-rating .wpd-rating-wrap .wpd-rate-starts:hover svg .wpd-star{fill:#FFED85}#wpd-post-rating.wpd-not-rated .wpd-rating-wrap .wpd-rate-starts svg:hover ~ svg .wpd-star{fill:#DDDDDD}.wpdiscuz-post-rating-wrap .wpd-rating .wpd-rating-wrap .wpd-rating-stars svg .wpd-star{fill:#DDDDDD}.wpdiscuz-post-rating-wrap .wpd-rating .wpd-rating-wrap .wpd-rating-stars svg .wpd-active{fill:#FFD700}#wpdcom .wpd-comment .wpd-follow-active{color:#ff7a00}#wpdcom .page-numbers{color:#555;border:#555 1px solid}#wpdcom span.current{background:#555}#wpdcom.wpd-layout-1 .wpd-new-loaded-comment > .wpd-comment-wrap > .wpd-comment-right{background:#FFFAD6}#wpdcom.wpd-layout-2 .wpd-new-loaded-comment.wpd-comment > .wpd-comment-wrap > .wpd-comment-right{background:#FFFAD6}#wpdcom.wpd-layout-2 .wpd-new-loaded-comment.wpd-comment.wpd-reply > .wpd-comment-wrap > .wpd-comment-right{background:transparent}#wpdcom.wpd-layout-2 .wpd-new-loaded-comment.wpd-comment.wpd-reply > .wpd-comment-wrap{background:#FFFAD6}#wpdcom.wpd-layout-3 .wpd-new-loaded-comment.wpd-comment > .wpd-comment-wrap > .wpd-comment-right{background:#FFFAD6}#wpdcom .wpd-follow:hover i, #wpdcom .wpd-unfollow:hover i, #wpdcom .wpd-comment .wpd-follow-active:hover i{color:#d20000}#wpdcom .wpdiscuz-readmore{cursor:pointer;color:#d20000}.wpd-custom-field .wcf-pasiv-star, #wpcomm .wpdiscuz-item .wpdiscuz-rating > label{color:#DDDDDD}.wpd-wrapper .wpd-list-item.wpd-active{border-top:3px solid #d20000}#wpdcom.wpd-layout-2 .wpd-comment.wpd-reply.wpd-unapproved-comment .wpd-comment-wrap{border-left:3px solid #FFFAD6}#wpdcom.wpd-layout-3 .wpd-comment.wpd-reply.wpd-unapproved-comment .wpd-comment-right{border-left:1px solid #FFFAD6}#wpdcom .wpd-prim-button{background-color:#d20000;color:#FFFFFF}#wpdcom .wpd_label__check i.wpdicon-on{color:#d20000;border:1px solid #e98080}#wpd-bubble-wrapper #wpd-bubble-all-comments-count{color:#d20000}#wpd-bubble-wrapper > div{background-color:#d20000}#wpd-bubble-wrapper > #wpd-bubble #wpd-bubble-add-message{background-color:#d20000}#wpd-bubble-wrapper > #wpd-bubble #wpd-bubble-add-message::before{border-left-color:#d20000;border-right-color:#d20000}#wpd-bubble-wrapper.wpd-right-corner > #wpd-bubble #wpd-bubble-add-message::before{border-left-color:#d20000;border-right-color:#d20000}.wpd-inline-icon-wrapper path.wpd-inline-icon-first{fill:#d20000}.wpd-inline-icon-count{background-color:#d20000}.wpd-inline-icon-count::before{border-right-color:#d20000}.wpd-inline-form-wrapper::before{border-bottom-color:#d20000}.wpd-inline-form-question{background-color:#d20000}.wpd-inline-form{background-color:#d20000}.wpd-last-inline-comments-wrapper{border-color:#d20000}.wpd-last-inline-comments-wrapper::before{border-bottom-color:#d20000}.wpd-last-inline-comments-wrapper .wpd-view-all-inline-comments{background:#d20000}.wpd-last-inline-comments-wrapper .wpd-view-all-inline-comments:hover,.wpd-last-inline-comments-wrapper .wpd-view-all-inline-comments:active,.wpd-last-inline-comments-wrapper .wpd-view-all-inline-comments:focus{background-color:#d20000}#wpdcom .ql-snow .ql-tooltip[data-mode="link"]::before{content:"Введите ссылку:"}#wpdcom .ql-snow .ql-tooltip.ql-editing a.ql-action::after{content:"Сохранить"}.comments-area{width:auto}
+</style>
+<link rel='stylesheet' id='wpdiscuz-fa-css' href='https://xakep.ru/wp-content/plugins/wpdiscuz/assets/third-party/font-awesome-5.13.0/css/fa.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='wpdiscuz-combo-css-css' href='https://xakep.ru/wp-content/plugins/wpdiscuz/assets/css/wpdiscuz-combo.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='Roboto-css' href='https://fonts.googleapis.com/css?family=Roboto%3A100%2C100italic%2C300%2C300italic%2Cregular%2Citalic%2C500%2C500italic%2C700%2C700italic%2C900%2C900italic&#038;subset=latin%2Ccyrillic' type='text/css' media='all' />
+<link rel='stylesheet' id='woohoo-default-css' href='https://xakep.ru/wp-content/themes/woohoo/style.css' type='text/css' media='all' />
+<link rel='stylesheet' id='woohoo-main-css' href='https://xakep.ru/wp-content/themes/woohoo/css/main.css' type='text/css' media='all' />
+<link rel='stylesheet' id='prettify-css' href='https://xakep.ru/wp-content/plugins/prettify-code-syntax/stylesheets/default.css' type='text/css' media='all' />
+<link rel='stylesheet' id='xakep-css' href='https://xakep.ru/wp-content/plugins/xakep-core/style.css?1749050311' type='text/css' media='all' />
+<link rel='stylesheet' id='xakep-xmd-css' href='https://xakep.ru/wp-content/plugins/xakep-core/xmd.css?1749050311' type='text/css' media='all' />
+<link rel='stylesheet' id='xakep-banners-css' href='https://xakep.ru/wp-content/plugins/xakep-core/banners/style.css?1749050311' type='text/css' media='all' />
+<link rel='stylesheet' id='xakep-ads-css-css' href='https://xakep.ru/wp-content/plugins/xakep-core/ads/style.css' type='text/css' media='all' />
+<script type='text/javascript' id='jquery-core-js-extra'>
+/* <![CDATA[ */
+var bd_w_blocks = {"bdaia_w_ajax_url":"https:\/\/xakep.ru\/wp-admin\/admin-ajax.php","bdaia_w_ajax_nonce":"5951b807f2"};
+var bd_blocks = {"bdaia_ajax_url":"https:\/\/xakep.ru\/wp-admin\/admin-ajax.php","bdaia_ajaxnonce":"5951b807f2"};
+var bd_script = {"post_id":"485398","ajaxurl":"https:\/\/xakep.ru\/wp-admin\/admin-ajax.php"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://xakep.ru/wp-includes/js/jquery/jquery.min.js' id='jquery-core-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-includes/js/jquery/jquery-migrate.min.js' id='jquery-migrate-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/plugins/xakep-core/ads/script.js' id='xakep-ads-js-js'></script>
+<script type='text/javascript' id='woohoo-views-js-extra'>
+/* <![CDATA[ */
+var woohoo_views_c = {"admin_ajax_url":"https:\/\/xakep.ru\/wp-admin\/admin-ajax.php","post_id":"485398"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/themes/woohoo/js/views.js' id='woohoo-views-js'></script>
+<script type='text/javascript' id='foobox-free-min-js-before'>
+/* Run FooBox FREE (v2.7.17) */
+var FOOBOX = window.FOOBOX = {
+	ready: true,
+	disableOthers: false,
+	o: {wordpress: { enabled: true }, excludes:'.fbx-link,.nofoobox,.nolightbox,a[href*="pinterest.com/pin/create/button/"]', affiliate : { enabled: false }, error: "Could not load the item"},
+	selectors: [
+		".gallery", ".wp-block-gallery", ".wp-caption", ".wp-block-image", "a:has(img[class*=wp-image-])", ".foobox"
+	],
+	pre: function( $ ){
+		// Custom JavaScript (Pre)
+		
+	},
+	post: function( $ ){
+		// Custom JavaScript (Post)
+		
+		// Custom Captions Code
+		
+	},
+	custom: function( $ ){
+		// Custom Extra JS
+		
+	}
+};
+</script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/plugins/foobox-image-lightbox/free/js/foobox.free.min.js' id='foobox-free-min-js'></script>
+<link rel="https://api.w.org/" href="https://xakep.ru/wp-json/" /><link rel="alternate" type="application/json" href="https://xakep.ru/wp-json/wp/v2/posts/485398" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://xakep.ru/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://xakep.ru/wp-includes/wlwmanifest.xml" />
+<meta name="generator" content="WordPress 6.1.7" />
+<link rel="canonical" href="https://xakep.ru/2024/10/04/nuclei-openapi/" />
+<link rel='shortlink' href='https://xakep.ru/?p=485398' />
+<link rel="alternate" type="application/json+oembed" href="https://xakep.ru/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fxakep.ru%2F2024%2F10%2F04%2Fnuclei-openapi%2F" />
+<link rel="alternate" type="text/xml+oembed" href="https://xakep.ru/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fxakep.ru%2F2024%2F10%2F04%2Fnuclei-openapi%2F&#038;format=xml" />
+<style type="text/css">
+    #wpadminbar .quicklinks {margin: 0 4px;}
+    #wpadminbar .quicklinks a {color: #aaa !important;}
+    #wpadminbar .quicklinks a strong {color: #fff; font-weight: bold;}
+    #wpadminbar .quicklinks li:hover>a,
+    #wpadminbar .quicklinks li a:hover,
+    #wpadminbar .quicklinks li a:focus {color: #fff !important; background-color: transparent !important;}
+    #wpadminbar .quicklinks #wp-admin-bar-bp-login,
+    #wpadminbar .quicklinks #wp-admin-bar-bp-register {display: none;}
+    #wpadminbar .quicklinks #wp-admin-bar-login,
+    #wpadminbar .quicklinks #wp-admin-bar-register {float: right;}
+    @media screen and (max-width: 782px){
+      #wpadminbar .quicklinks #wp-admin-bar-login,
+      #wpadminbar .quicklinks #wp-admin-bar-register {display: block; padding: 0 12px;}
+    }
+    @media print{
+      @page{size:16in 200in;margin:0}
+    }
+  </style>        <script type="text/javascript">
+            /* <![CDATA[ */
+            var sf_position = '0';
+            var sf_templates = "<a href=\"{search_url_escaped}\"><span class=\"sf_text\">\u041f\u043e\u0441\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0432\u0441\u0435 \u0440\u0435\u0437\u0443\u043b\u044c\u0442\u0430\u0442\u044b<\/span><\/a>";
+            var sf_input = '.search-live';
+            jQuery(document).ready(function(){if(typeof jQuery(sf_input).ajaxyLiveSearch === 'function'){
+                jQuery(sf_input).ajaxyLiveSearch({"expand":false,"searchUrl":"https:\/\/xakep.ru\/?s=%s","text":"Search","delay":500,"iwidth":180,"width":315,"ajaxUrl":"https:\/\/xakep.ru\/wp-admin\/admin-ajax.php","rtl":0});
+                jQuery(".live-search_ajaxy-selective-input").keyup(function() {
+                    var width = jQuery(this).val().length * 8;
+                    if(width < 50) {
+                        width = 50;
+                    }
+                    jQuery(this).width(width);
+                });
+                jQuery(".live-search_ajaxy-selective-search").click(function() {
+                    jQuery(this).find(".live-search_ajaxy-selective-input").focus();
+                });
+                jQuery(".live-search_ajaxy-selective-close").click(function() {
+                    jQuery(this).parent().remove();
+                });
+            }});
+            /* ]]> */
+        </script>
+    <link rel="shortcut icon" href="https://xakep.ru/wp-content/uploads/2016/09/favicon.ico" type="image/x-icon" />	<script type="text/javascript">
+		var bdaia_theme_uri = 'https://xakep.ru/wp-content/themes/woohoo';
+	</script>
+	<style type="text/css">
+.bdaia-post-content, .bdaia-post-content p, .bdaia-post-content h1, .bdaia-post-content h2, .bdaia-post-content h3, .bdaia-post-content h4, .bdaia-post-content h5, .bdaia-post-content h6, .bdaia-post-content blockquote p, blockquote p {color: 333333;}.bdaia-post-content a{color: #2283B3;}.bdaia-post-content a:hover{color: #3AA0E8;}body {}
+a:hover{color:#dd2200}
+::selection{background:#dd2200}
+a.more-link, button, .btn-link, input[type="button"], input[type="reset"], input[type="submit"] { background-color:#dd2200}
+button:active, .btn-link:active, input[type="button"]:active, input[type="reset"]:active, input[type="submit"]:active { background-color:#dd2200}
+.gotop:hover { background-color:#dd2200}
+.top-search { background-color:#dd2200}
+.primary-menu ul#menu-primary > li.current-menu-parent, .primary-menu ul#menu-primary > li.current-menu-ancestor, .primary-menu ul#menu-primary > li.current-menu-item, .primary-menu ul#menu-primary > li.current_page_item { color: #dd2200; }
+.primary-menu ul#menu-primary > li.current-menu-parent > a, .primary-menu ul#menu-primary > li.current-menu-ancestor > a, .primary-menu ul#menu-primary > li.current-menu-item > a, .primary-menu ul#menu-primary > li.current_page_item > a { color: #dd2200; }
+.primary-menu ul#menu-primary > li:hover > a { color: #dd2200; }
+.primary-menu ul#menu-primary li.bd_menu_item ul.sub-menu li:hover > ul.sub-menu, .primary-menu ul#menu-primary li.bd_mega_menu:hover > ul.bd_mega.sub-menu, .primary-menu ul#menu-primary li.bd_menu_item:hover > ul.sub-menu, .primary-menu ul#menu-primary .sub_cats_posts { border-top-color: #dd2200; }
+div.nav-menu.primary-menu-dark a.menu-trigger:hover i, div.nav-menu.primary-menu-light a.menu-trigger:hover i, div.nav-menu.primary-menu-light a.menu-trigger.active i, div.nav-menu.primary-menu-dark a.menu-trigger.active i { background: #dd2200; }
+span.bd-criteria-percentage { background: #dd2200; color: #dd2200; }
+.divider-colors { background: #dd2200; }
+.blog-v1 article .entry-meta a { color: #dd2200; }
+.blog-v1 article .article-formats { background-color: #dd2200; }
+.cat-links { background-color: #dd2200; }
+.new-box { border-top-color: #dd2200; }
+.widget a:hover { color: #dd2200; }
+.timeline-article a:hover i {
+    color: #dd2200;
+}
+h4.block-title:before {background: #dd2200;}
+#header.bdayh-header.a {background: #dd2200;}
+.bdaia-load-comments-btn a:hover,
+.bd-more-btn:hover{
+    border-color: #dd2200 ;
+    background-color: #dd2200 ;
+}
+#bdaia-cats-builder ul.slick-dots li.slick-active button{
+	background: #dd2200;
+}
+.bdaia-cats-more-btn,
+.bbd-post-cat-content, .bbd-post-cat-content a,
+.blog-v1 article a.more-link { color: #dd2200; }
+#big-grids .flex-next:hover,
+#big-grids .flex-prev:hover,
+.featured-title:hover .featured-cat a,
+.featured-title .featured-comment a,
+.big-grids-container .flex-control-paging li a.flex-active,
+.tagcloud a:hover { background: #dd2200; }
+.featured-title:hover .bd-cat-link:before {border-top-color: #dd2200;}
+.featured-title .featured-comment a:after {
+    border-color: #dd2200 rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0);
+}
+ul.tabs_nav li.active a { background: #dd2200; }
+.bd-tweets ul.tweet_list li.twitter-item a { color: #dd2200; }
+.widget.bd-login .login_user .bio-author-desc a { color: #dd2200; }
+.comment-reply-link, .comment-reply-link:link, .comment-reply-link:active { color: #dd2200; }
+.gallery-caption { background-color: #dd2200; }
+.slider-flex ol.flex-control-paging li a.flex-active { background: #dd2200; }
+#folio-main ul#filters li a.selected { background: #dd2200; }
+.search-mobile button.search-button { background: #dd2200; }
+.bdaia-pagination .current {
+background-color: #dd2200;
+border-color: #dd2200;
+}
+.gotop{background: #dd2200;}
+.ei-slider-thumbs li.ei-slider-element {background: #dd2200;}
+.ei-title h2,
+.ei-title h3 {border-right-color: #dd2200;}
+.sk-circle .sk-child:before,
+#reading-position-indicator{background: #dd2200;}
+#bdCheckAlso{border-top-color: #dd2200;}
+.woocommerce .product .onsale, .woocommerce .product a.button:hover, .woocommerce .product #respond input#submit:hover, .woocommerce .checkout input#place_order:hover, .woocommerce .woocommerce.widget .button:hover, .single-product .product .summary .cart .button:hover, .woocommerce-cart .woocommerce table.cart .button:hover, .woocommerce-cart .woocommerce .shipping-calculator-form .button:hover, .woocommerce .woocommerce-message .button:hover, .woocommerce .woocommerce-error .button:hover, .woocommerce .woocommerce-info .button:hover, .woocommerce-checkout .woocommerce input.button:hover, .woocommerce-page .woocommerce a.button:hover, .woocommerce-account div.woocommerce .button:hover, .woocommerce.widget .ui-slider .ui-slider-handle, .woocommerce.widget.widget_layered_nav_filters ul li a {background: none repeat scroll 0 0 #dd2200 !important}
+.bdaia-ns-wrap:after {background:#dd2200}
+.bdaia-header-default #navigation .primary-menu ul#menu-primary > li >.bd_mega.sub-menu,
+.bdaia-header-default #navigation .primary-menu ul#menu-primary > li > .sub-menu,
+.bdaia-header-default #navigation .primary-menu ul#menu-primary .sub_cats_posts {border-top-color: #dd2200}
+.bdaia-header-default #navigation .primary-menu ul#menu-primary > li:hover > a:after,
+.bdaia-header-default #navigation .primary-menu ul#menu-primary > li.current-menu-item > a:after,
+.bdaia-header-default #navigation .primary-menu ul#menu-primary > li.current-menu-ancestor > a:after,
+.bdaia-header-default #navigation .primary-menu ul#menu-primary > li.current-menu-parent > a:after {background:#dd2200}
+.bdaia-header-default #navigation .primary-menu #menu-primary > li:hover > a{color: #dd2200}
+.bdayh-click-open{background:#dd2200}
+div.bdaia-alert-new-posts-inner,
+.bdaia-header-default .header-wrapper{border-top-color: #dd2200}
+.bdaia-post-content blockquote{border-color: #dd2200}
+.bdaia-post-content a {color: #dd2200}
+div.widget.bdaia-widget.bdaia-widget-timeline .widget-inner a:hover,
+div.widget.bdaia-widget.bdaia-widget-timeline .widget-inner a:hover span.bdayh-date {
+    color: #dd2200;
+}
+div.widget.bdaia-widget.bdaia-widget-timeline .widget-inner a:hover span.bdayh-date:before {
+    background: #dd2200;
+    border-color: #dd2200;
+}
+#navigation .bdaia-alert-new-posts,
+#navigation .bdaia-cart span.shooping-count,
+div.bdaia-tabs.horizontal-tabs ul.nav-tabs li.current:before,
+div.bdaia-toggle h4.bdaia-toggle-head.toggle-head-open span.bdaia-sio {
+    background: #dd2200;
+}
+.woocommerce .product .onsale, .woocommerce .product a.button:hover, .woocommerce .product #respond input#submit:hover, .woocommerce .checkout input#place_order:hover, .woocommerce .woocommerce.widget .button:hover, .single-product .product .summary .cart .button:hover, .woocommerce-cart .woocommerce table.cart .button:hover, .woocommerce-cart .woocommerce .shipping-calculator-form .button:hover, .woocommerce .woocommerce-message .button:hover, .woocommerce .woocommerce-error .button:hover, .woocommerce .woocommerce-info .button:hover, .woocommerce-checkout .woocommerce input.button:hover, .woocommerce-page .woocommerce a.button:hover, .woocommerce-account div.woocommerce .button:hover, .woocommerce.widget .ui-slider .ui-slider-handle, .woocommerce.widget.widget_layered_nav_filters ul li a {
+    background: none repeat scroll 0 0 #dd2200 !important
+}
+div.bdaia-post-count {border-left-color :#dd2200}
+#bdaia-selector #bdaia-selector-toggle {background:#dd2200}
+div.bdaia-blocks.bdaia-block22 div.block-article hr{background:#dd2200}
+div.bdaia-blocks.bdaia-block22 div.block-article .post-more-btn a,
+div.bdaia-blocks.bdaia-block22 div.block-article .post-more-btn a:hover,
+div.bdaia-blocks.bdaia-block22 div.block-article .bdaia-post-cat-list a,
+div.bdaia-blocks.bdaia-block22 div.block-article .bdaia-post-cat-list a:hover{color:#dd2200}
+body{font-size : 15px; }
+.bdaia-header-default .topbar .top-nav > li > a{font-size : 13px; }
+.bdaia-header-default #navigation .primary-menu #menu-primary > li > a{font-size : 14px; font-weight: bold; }
+#bd-MobileSiderbar #mobile-menu a{font-weight: bolder; }
+.bdaia-crumb-container{font-family: 'Roboto'; }
+.bdaia-feature-posts.bdaia-fp-s1 .bdaia-post-title .entry-title{font-family: 'Roboto'; }
+.bdaia-feature-posts.bdaia-fp-s2 .big-grids .featured-title h2{font-family: 'Roboto'; }
+.bdaia-feature-posts.bdaia-fp-s2 .big-grids.big-grid1 .big-grid-1 .featured-title h2{font-size : 36px; line-height : 36px; }
+.bdaia-feature-posts.bdaia-fp-s3 .big-grids.big-grid2 .big-grid-1 .featured-title h2, .bdaia-feature-posts.bdaia-fp-s3 .big-grids.big-grid2 .big-grid-2 .featured-title h2{font-family: 'Roboto'; font-size : 36px; line-height : 36px; }
+.bd-post-carousel-item article .bd-meta-info-align h3{font-family: 'Roboto'; }
+.bd-cat-link{font-family: 'Roboto'; }
+.bd-more-btn, .bdaia-wb-wrap .bdaia-wb-more-btn .bdaia-wb-mb-inner, .bdaia-load-more-news-btn, button, input[type="button"], input[type="reset"], input[type="submit"]{font-family: 'Roboto'; text-transform: uppercase; }
+.bdaia-block-wrap h4.block-title, .bdaia-template-head h4.block-title{font-family: 'Roboto'; font-size : 26px; line-height : 32px; }
+.bdaia-block-wrap .bdaia-blocks p.block-exb, .bdaia-slider-block .ei-title h3{font-size : 15px; }
+.bdaia-blocks.bdaia-block1 h3{font-family: 'Roboto'; }
+.bdaia-blocks.bdaia-block2 h3{font-family: 'Roboto'; }
+.bdaia-blocks.bdaia-block3 h3{font-family: 'Roboto'; }
+.bdaia-blocks.bdaia-block4 h3{font-family: 'Roboto'; }
+.bdaia-blocks.bdaia-block5 h3{font-family: 'Roboto'; }
+.bdaia-blocks.bdaia-block6 h3{font-family: 'Roboto'; font-weight: bolder; }
+.bdaia-blocks.bdaia-block7 h3{font-family: 'Roboto'; }
+.bdaia-blocks.bdaia-block8 .block-article.block-first-article h3{font-family: 'Roboto'; }
+.bdaia-blocks.bdaia-block9 .block-article.block-first-article h3{font-family: 'Roboto'; }
+.bdaia-blocks.bdaia-block10 .block-article.block-first-article h3{font-family: 'Roboto'; }
+.bdaia-blocks.bdaia-block11 .block-article.block-first-article h3{font-family: 'Roboto'; }
+.bdaia-wb-wrap .bwb-article-content-wrapper footer{font-size : 13px; line-height : 16px; font-weight: normal; }
+.bdaia-wb-wrap .bdaia-wb-article p.block-exb, .check-also-post p{font-size : 14px; }
+div.widget.bdaia-widget .widget-inner li, div.widget.bdaia-widget .widget-inner h3, div.widget.bdaia-widget .widget-inner h4, div.widget.bdaia-widget.bd-tweets .widget-inner p.twitter-text, .check-also-post .post-title, .bdaia-posts-grid-post.post .entry-title, .bdaia-posts-grid-post h3{font-size : 15px; line-height : 18px; font-weight: 400; }
+.bdaia-wb-wrap .bdaia-wb-article.bdaia-wba-big .entry-title, .bdaia-wb-wrap .bdaia-wb-article.bdaia-wba-bigsh .entry-title{font-family: 'Roboto'; }
+.single .bdaia-meta-info, .page .bdaia-meta-info{font-family: 'Roboto'; }
+.bdaia-post-title .entry-title{font-family: 'Roboto'; }
+.single .bdaia-site-content h4.block-title, .page .bdaia-site-content h4.block-title, .bdaia-author-box .authorBlock-header-title{font-family: 'Roboto'; }
+.single .bdaia-site-content .bdaia-post-content, .single .bdaia-site-content .bdaia-post-content p, .page .bdaia-site-content .bdaia-post-content, .page .bdaia-site-content .bdaia-post-content p{font-size : 18px; line-height : 26px; }
+.single .bdaia-site-content .bdaia-post-content blockquote, .single .bdaia-site-content .bdaia-post-content blockquote p, .page .bdaia-site-content .bdaia-post-content blockquote, .page .bdaia-site-content .bdaia-post-content blockquote p{font-size : 16px; line-height : 22px; font-weight: 400; text-transform: none; }
+.bdaia-site-content .bdaia-post-content h1{font-family: 'Roboto'; }
+.bdaia-site-content .bdaia-post-content h2{font-family: 'Roboto'; }
+.bdaia-site-content .bdaia-post-content h3{font-family: 'Roboto'; }
+.bdaia-site-content .bdaia-post-content h4{font-family: 'Roboto'; }
+.bdaia-site-content .bdaia-post-content h5{font-family: 'Roboto'; }
+.bdaia-site-content .bdaia-post-content h6{font-family: 'Roboto'; }
+
+</style><!--[if IE]>
+<script type="text/javascript">jQuery(document).ready(function (){ jQuery(".menu-item").has("ul").children("a").attr("aria-haspopup", "true");});</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script src="https://xakep.ru/wp-content/themes/woohoo/js/html5.js"></script>
+<script src="https://xakep.ru/wp-content/themes/woohoo/js/selectivizr-min.js"></script>
+<![endif]-->
+<!--[if IE 9]>
+<link rel="stylesheet" type="text/css" media="all" href="https://xakep.ru/wp-content/themes/woohoo/css/ie9.css" />
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" media="all" href="https://xakep.ru/wp-content/themes/woohoo/css/ie8.css" />
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" media="all" href="https://xakep.ru/wp-content/themes/woohoo/css/ie7.css" />
+<![endif]-->
+	<link rel="icon" href="https://xakep.ru/wp-content/uploads/2017/06/xakep-favicon-93x93.png" sizes="32x32" />
+<link rel="icon" href="https://xakep.ru/wp-content/uploads/2017/06/xakep-favicon.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://xakep.ru/wp-content/uploads/2017/06/xakep-favicon.png" />
+<meta name="msapplication-TileImage" content="https://xakep.ru/wp-content/uploads/2017/06/xakep-favicon.png" />
+		<style type="text/css" id="wp-custom-css">
+			#xakep-socials {
+    display:flex;
+    flex-wrap:wrap;
+    justify-content: space-between;
+  margin: 0;
+}
+
+#xakep-socials a {
+    max-width: 100px;
+    width: 100%;
+    opacity: 0.8;
+    line-height: 0px;
+    display: relative;
+    margin: 0;
+}
+
+#xakep-socials svg {
+    max-width: 100px;
+    width 100%;
+    height: auto;
+}
+		</style>
+		
+	<meta property="og:type" content="article" />
+	<meta property="og:url" content="https://xakep.ru/2024/10/04/nuclei-openapi/" />
+	<meta property="og:title" content="Потрошилка API. Используем Nuclei и кастомные шаблоны для фаззинга OpenAPI" />
+	<meta property="og:description" content="В этой статье мы расскажем о сканировании API веб‑приложений с помощью утилиты Nuclei. Для демонстрации мы будем атаковать заведомо уязвимое приложение, использующее OpenAPI. По дороге научимся писать кастомные шаблоны для Nuclei, которые помогут искать уязвимости на автомате." />
+	<meta property="og:image" content="https://xakep.ru/wp-content/uploads/2024/10/485398/sawmill-socials.jpg" />
+
+</head>
+<body class="post-template-default single single-post postid-485398 single-format-standard logged-in subscriber " itemscope itemtype="http://schema.org/WebPage">
+
+<div class="page-outer bdaia-header-default bdaia-post-template-style7  bdaia-sidebar-none ">
+	<div class="bg-cover"></div>
+	<aside id="bd-MobileSiderbar">
+					<div class="search-mobile">
+				<form role="search" method="get" class="search-form" action="https://xakep.ru/">
+				<label>
+					<span class="screen-reader-text">Найти:</span>
+					<input type="search" class="search-field" placeholder="Поиск&hellip;" value="" name="s" />
+				</label>
+				<input type="submit" class="search-submit" value="Поиск" />
+			</form>			</div>
+				<div id="mobile-menu"></div>
+					<div class="widget-social-links bdaia-social-io-colored">
+				<div class="sl-widget-inner">
+									</div>
+			</div>
+			</aside>
+	<div id="page">
+		<div class="inner-wrapper">
+			<div id="warp" class="clearfix  bdaia-sidebar-none ">
+				
+<div class="header-wrapper bdaia-hibryd-menu">
+	
+	
+	
+	<style scoped>.bdaia-header-default #navigation .primary-menu #menu-primary > li > a, .bdaia-header-default #navigation .primary-menu #menu-primary > li > a > *, #navigation .bdaia-cart, .bdaia-nav-search, #navigation .bdaia-random-post{color: #ededed !important;} .bdaia-header-default #navigation .primary-menu #menu-primary > li.bd_mega_menu > a:before, .bdaia-header-default #navigation .primary-menu #menu-primary > li.menu-item-object-category > a:before, .bdaia-header-default #navigation .primary-menu #menu-primary > li.menu-item-has-children > a:before{border-top-color:#ededed;}.bdaia-header-default #navigation .primary-menu #menu-primary > li > a:hover, .bdaia-header-default #navigation .primary-menu #menu-primary > li:hover > a {color: #ffffff;}.bdaia-header-default #navigation .primary-menu ul#menu-primary > li:hover > a, .bdaia-header-default #navigation .primary-menu ul#menu-primary > li.current-menu-item > a, .bdaia-header-default #navigation .primary-menu ul#menu-primary > li.current-menu-ancestor > a, .bdaia-header-default #navigation .primary-menu ul#menu-primary > li.current-menu-parent > a, #navigation .bdaia-cart, .bdaia-nav-search, #navigation .bdaia-random-post {background: #23282D; border : 0 none !important; color: #ffffff;}</style><div id=xpwdh>Временная скидка 60% <a href="https://xakep.ru/about-magazine/">на&nbsp;годовую подписку</a>!</div><div class="cfix"></div>
+<nav id="navigation" style="background: #32393D; border-top-color:transparent !important">
+  <div class="navigation-wrapper" style="background: #32393D; border-top-color:transparent !important">
+    <div class="bd-container">
+      <div class="bdayh-click-open"><div class="bd-ClickOpen bd-ClickAOpen"><span></span></div></div>
+      <style type=text/css>
+        .bdaia-header-default div.header-wrapper.bdaia-hibryd-menu{z-index:111;}
+        #menu-profile{z-index:1;}
+
+        #menu-profile{position:absolute;top:0;right:0;min-width:120px;max-width:200px;height:60px;color:#fff;padding:10px 0 10px 50px;}
+        #menu-profile a{color:#fff;}
+        #menu-profile .username{display:block;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;}
+        #menu-profile>img{border-radius:50%;border: solid 2px #fff;max-width: 42px;max-height: 42px;position: absolute;top:10px;left:0;}
+        #menu-profile>a{text-decoration:underline;}
+        #menu-profile .login-link{display:block;float:right;margin:10px 5px 0 0;}
+        #menu-profile .links{display:none;position:absolute;width:118px;left:0;top:55px;padding:10px 0;background-color: #32393D;border: solid 1px #fff;border-radius: 6px;color: #fff;box-shadow: 0 5px 15px #000;}
+        #menu-profile .links:before{content:'';display:block;position:absolute;width:16px;height:16px;border:solid 8px transparent;border-bottom-color: #fff;top:-16px;left:12px;}
+        #menu-profile .links a{display:block;padding:2px 15px;}
+        #menu-profile .links .logout{display:none;}
+        #menu-profile .links a:hover{background-color:#23282D;}
+        #menu-profile:hover .links, #menu-profile:focus .links, #menu-profile .links:hover, #menu-profile .links:focus{display:block;}
+
+        #navigation .primary-menu{position:relative !important;}
+        #navigation .secondary-menu{position:relative;height:34px;background-color:#23282D;}
+        #navigation .secondary-menu:before, #navigation .secondary-menu:after{content:'';display:block;position:absolute;top:0;width:100%;height:34px;background-color:#23282D;}
+        #navigation .secondary-menu:before{left:-100%;}
+        #navigation .secondary-menu:after{right:-100%;}
+        #navigation .mobile-subscribe{display:none;text-align:center;height:34px;line-height:34px;color:#fff;text-decoration:underline;}
+        #navigation .secondary-menu #menu-tags{float:left;height:34px;margin:0;}
+        #navigation .secondary-menu #menu-tags li{display:inline-block;}
+        #navigation .secondary-menu #menu-tags li a {display:inline-block;height:34px;line-height:34px;color: #fff;padding:0 10px;}
+        #navigation .secondary-menu #menu-tags li a:hover{background-color:#32393D;}
+        .bdaia-header-default div.header-wrapper.bdaia-hibryd-menu #navigation .bdaia-alert-new-posts, .bdaia-header-default div.header-wrapper.bdaia-hibryd-menu #navigation .bdaia-alert-new-posts span, .bdaia-header-default div.header-wrapper.bdaia-hibryd-menu #navigation .bdaia-random-post, .bdaia-header-default div.header-wrapper.bdaia-hibryd-menu #navigation .bdaia-random-post .bdaia-io, .bdaia-header-default div.header-wrapper.bdaia-hibryd-menu #navigation .bdaia-cart, .bdaia-header-default div.header-wrapper.bdaia-hibryd-menu #navigation .bdaia-cart .bdaia-io, .bdaia-header-default div.header-wrapper.bdaia-hibryd-menu .bdaia-nav-search, .bdaia-header-default div.header-wrapper.bdaia-hibryd-menu .bdaia-nav-search .bdaia-ns-btn.bdaia-io{height:34px;line-height:34px;}
+        .bdaia-header-default div.header-wrapper.bdaia-hibryd-menu .bdaia-nav-search, .bdaia-header-default div.header-wrapper.bdaia-hibryd-menu .bdaia-nav-search .bdaia-ns-btn.bdaia-io{font-size: 18px;}
+        #navigation .bdaia-alert-new-posts {padding: 0 30px; font-weight: 700;}
+        .bdaia-hibryd-menu .bdayh-click-open, .bdaia-hibryd-menu .bd-ClickOpen{width:60px;height:60px;line-height:60px;background-color:transparent;}
+        .bdaia-hibryd-menu .bd-ClickOpen{padding:0 0 0 12px;}
+        .bdaia-hibryd-menu .bd-ClickOpen span{margin:20px 0 0 0 !important;}
+        .bdaia-hibryd-menu .bd-ClickOpen span, .bdaia-hibryd-menu .bd-ClickOpen span:after, .bdaia-hibryd-menu .bd-ClickOpen span:before {height:3px;width:32px;}
+        .bdaia-hibryd-menu .bd-ClickOpen span {margin: 16px 0 0 0;}
+        #bd-MobileSiderbar #menu-tags{display:block;border-top: solid 8px #eee;}
+        #bd-MobileSiderbar #menu-tags li{display:block;}
+
+        @media (min-width: 768px) {
+          .bdaia-header-default .bdayh-click-open {display: none !important;}
+          .bdaia-header-default div.header-wrapper.bdaia-hibryd-menu #navigation div.bdaia-nav-search,
+          .bdaia-header-default div.header-wrapper.bdaia-hibryd-menu #navigation ul#menu-primary{display:block !important;}
+          #navigation .primary-menu {position:absolute;width: 100%;overflow: hidden;}
+          .bdaia-header-default div.header-wrapper.bdaia-hibryd-menu div.logo {
+            float: left;
+            padding-left: 0;
+            padding-right: 10px;
+            max-height: 60px;
+          }
+        }
+        @media (max-width:900px){
+          #menu-profile{width:60px !important;min-width:0;padding:0;right:-2%;}
+          #menu-profile>span, #menu-profile>.logout-link{display:none !important;}
+          #menu-profile .login-link{margin:20px 5px 0 0;}
+          #menu-profile .links{left:auto;right:18px;}
+          #menu-profile .links:before{left:auto;right:12px;}
+          #menu-profile .links .logout{display:block;}
+          #menu-profile>img{display:block !important;}
+        }
+        @media (max-width:767px){
+          #menu-profile{right:-5.5%;}
+          #menu-profile .links a{padding:7px 15px;}
+          #navigation .secondary-menu #menu-tags{display:none;}
+          #navigation .mobile-subscribe{display:block;}
+          body.subscriber #navigation .secondary-menu{display:none!important;}
+        }
+        @media (max-width:479px){
+          #menu-profile{right:0;}
+        }
+        .bdaia-blocks.bdaia-block6{z-index:0;}
+      </style>
+      <div id="menu-profile" tabindex=0>        <img alt='' src='https://secure.gravatar.com/avatar/d81ab53f198585701d0d31286cbf1d0e?s=42&#038;d=retro&#038;r=g' srcset='https://secure.gravatar.com/avatar/d81ab53f198585701d0d31286cbf1d0e?s=84&#038;d=retro&#038;r=g 2x' class='avatar avatar-42 photo' height='42' width='42' loading='lazy' decoding='async'/>        <span class=username>
+          WineBrute          </span>
+        <a href="https://xakep.ru/wp-login.php?action=logout&amp;redirect_to=https%3A%2F%2Fxakep.ru%2F2024%2F10%2F04%2Fnuclei-openapi%2F&amp;_wpnonce=3966660f3f" class=logout-link>Выйти</a>
+        <div class=links>
+          <a href="https://xakep.ru/wp-admin/profile.php">Профиль</a>
+          <a href="https://xakep.ru/wp-admin/users.php?page=paywall_subscribes">Подписка</a>
+          <a href="https://xakep.ru/wp-admin/users.php?page=xakep_bookmarks">Избранное</a>
+          <a href="https://xakep.ru/wp-admin/users.php?page=xakep_referrals">Бонусы</a>
+                                        <a href="https://xakep.ru/wp-login.php?action=logout&amp;redirect_to=https%3A%2F%2Fxakep.ru%2F2024%2F10%2F04%2Fnuclei-openapi%2F&amp;_wpnonce=3966660f3f" class=logout>Выйти</a>
+        </div>
+      </div>
+
+
+              <div class="primary-menu">
+                                
+    <div class="logo">
+        <h2 class="site-title" title="Факультет компьютерной опасности">                        <a href="https://xakep.ru/" rel="home">
+                <img src="https://xakep.ru/wp-content/uploads/2018/09/x-new_6.png" alt="Хакер" />
+            </a>
+                        </h2>    </div><!-- End Logo -->
+                    <ul id="menu-primary">
+            <li id="menu-item-154670" class=" menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent bd_depth- bd_menu_item " ><a href="https://xakep.ru/category/hack/">  <span class="menu-label" style="" >Взлом</span></a>
+
+<div class="mega-menu-content">
+</div><li id="menu-item-154675" class=" menu-item menu-item-type-taxonomy menu-item-object-category bd_depth- bd_menu_item " ><a href="https://xakep.ru/category/privacy/">  <span class="menu-label" style="" >Приватность</span></a>
+
+<div class="mega-menu-content">
+</div><li id="menu-item-154678" class=" menu-item menu-item-type-taxonomy menu-item-object-category bd_depth- bd_menu_item " ><a href="https://xakep.ru/category/tricks/">  <span class="menu-label" style="" >Трюки</span></a>
+
+<div class="mega-menu-content">
+</div><li id="menu-item-154671" class=" menu-item menu-item-type-taxonomy menu-item-object-category bd_depth- bd_menu_item " ><a href="https://xakep.ru/category/coding/">  <span class="menu-label" style="" >Кодинг</span></a>
+
+<div class="mega-menu-content">
+</div><li id="menu-item-154669" class=" menu-item menu-item-type-taxonomy menu-item-object-category bd_depth- bd_menu_item " ><a href="https://xakep.ru/category/admin/">  <span class="menu-label" style="" >Админ</span></a>
+
+<div class="mega-menu-content">
+</div><li id="menu-item-154702" class=" menu-item menu-item-type-taxonomy menu-item-object-category bd_depth- bd_menu_item " ><a href="https://xakep.ru/category/geek/">  <span class="menu-label" style="" >Geek</span></a>
+
+<div class="mega-menu-content">
+</div><li id="menu-item-505321" class="red menu-item menu-item-type-custom menu-item-object-custom bd_depth- bd_menu_item " ><a target="_blank" href="https://xakep.shop/">  <span class="menu-label" style="" >Магазин</span></a>
+
+<div class="mega-menu-content">
+</div>          </ul>
+        </div>
+
+        <div class="cfix"></div>
+        <div class="secondary-menu">
+          <a class=mobile-subscribe href="/wp-admin/users.php?page=paywall_subscribes&from=paywall_subscribe&subscribe=12_months">Подписаться на материалы</a>
+          <div class="menu-tags-container"><ul id="menu-tags" class="menu"><li id="menu-item-159917" class="menu-item menu-item-type-taxonomy menu-item-object-post_tag menu-item-159917"><a href="https://xakep.ru/tag/windows/">Windows</a></li>
+<li id="menu-item-159918" class="menu-item menu-item-type-taxonomy menu-item-object-post_tag menu-item-159918"><a href="https://xakep.ru/tag/linux/">Linux</a></li>
+<li id="menu-item-159919" class="menu-item menu-item-type-taxonomy menu-item-object-post_tag menu-item-159919"><a href="https://xakep.ru/tag/android/">Android</a></li>
+<li id="menu-item-159921" class="menu-item menu-item-type-taxonomy menu-item-object-post_tag menu-item-159921"><a href="https://xakep.ru/tag/zhelezo/">Железо</a></li>
+<li id="menu-item-381088" class="menu-item menu-item-type-taxonomy menu-item-object-post_tag menu-item-381088"><a href="https://xakep.ru/tag/hackthebox/">Райтапы</a></li>
+<li id="menu-item-452808" class="menu-item menu-item-type-taxonomy menu-item-object-post_tag menu-item-452808"><a href="https://xakep.ru/tag/iskusstvennyj-intellekt/">Нейросети</a></li>
+<li id="menu-item-452807" class="menu-item menu-item-type-taxonomy menu-item-object-post_tag menu-item-452807"><a href="https://xakep.ru/tag/python/">Python</a></li>
+<li id="menu-item-355822" class="hidden menu-item menu-item-type-custom menu-item-object-custom menu-item-355822"><a target="_blank" rel="noopener" href="https://xakep.ru/issues/xa/">Все выпуски «Хакера»</a></li>
+<li id="menu-item-483595" class="hidden menu-item menu-item-type-custom menu-item-object-custom menu-item-483595"><a href="https://xakep.shop/advert">Реклама на «Хакере»</a></li>
+</ul></div>          <span class="bdaia-alert-new-posts">Выпуски</span>
+                      <div class="bdaia-nav-search">
+              <span class="bdaia-ns-btn bdaia-io bdaia-io-search"></span>
+              <div class="bdaia-ns-wrap">
+                <div class="bdaia-ns-content">
+                  <div class="bdaia-ns-inner">
+                    <form method="get" id="searchform" action="/">
+                      <input type="text" class="bbd-search-field" id="s" name="s" placeholder="Поиск по сайту" />
+                      <button type="submit" class="bbd-search-btn"><span class="bdaia-io bdaia-io-search"></span></button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+                  </div>
+      
+              <div class="cfix"></div>
+        <style type=text/css>
+                  </style>
+        <div class=bdaia-alert-new-posts-content>
+          <div class=bdaia-alert-new-posts-inner>
+            <div class=bdaia-anp-inner>
+              <a href=/issues title="Все выпуски «Хакера»" class="bdaia-io bdaia-io-angle-double-left">&nbsp;</a>
+              
+
+
+              <div class="bd-col-xs-4 bd-col-sm-3 bd-col-md-2 sub">
+                <a href=https://xakep.ru/about target=_blank>
+                  <p class=desc>
+                    <img src=/wp-content/plugins/xakep-core/images/xakep_logo_w.png alt= />
+                    Годовая<br/>подписка<br/>на<br/><strong>Хакер</strong>
+                  </p>
+                  <img src=/wp-content/plugins/xakep-core/images/issue-stub.png width=210 height=280 alt= />
+                </a>
+                <span class="starburst"><span><span><span>-60%</span></span></span></span>              </div>
+            <div class="bd-col-xs-4 bd-col-sm-3 bd-col-md-2 current_issue">
+                  <div class=img-wrap>
+                    <a href="/issues/xa/313"><img width="210" height="280" src="https://xakep.ru/wp-content/uploads/2025/06/508544/313-210x280.jpg" class="attachment-medium size-medium wp-post-image" alt="" decoding="async" loading="lazy" srcset="https://xakep.ru/wp-content/uploads/2025/06/508544/313-210x280.jpg 210w, https://xakep.ru/wp-content/uploads/2025/06/508544/313-70x93.jpg 70w, https://xakep.ru/wp-content/uploads/2025/06/508544/313-768x1024.jpg 768w, https://xakep.ru/wp-content/uploads/2025/06/508544/313-1152x1536.jpg 1152w, https://xakep.ru/wp-content/uploads/2025/06/508544/313.jpg 1536w" sizes="(max-width: 210px) 100vw, 210px" /></a>
+                    <p class=title>Хакер #313. Вызов для Windows</p>
+                  </div>
+                </div><div class="bd-col-xs-4 bd-col-sm-3 bd-col-md-2 ">
+                  <div class=img-wrap>
+                    <a href="/issues/xa/312"><img width="210" height="280" src="https://xakep.ru/wp-content/uploads/2025/05/505455/312-210x280.jpg" class="attachment-medium size-medium wp-post-image" alt="" decoding="async" loading="lazy" srcset="https://xakep.ru/wp-content/uploads/2025/05/505455/312-210x280.jpg 210w, https://xakep.ru/wp-content/uploads/2025/05/505455/312-70x93.jpg 70w, https://xakep.ru/wp-content/uploads/2025/05/505455/312-768x1024.jpg 768w, https://xakep.ru/wp-content/uploads/2025/05/505455/312-1152x1536.jpg 1152w, https://xakep.ru/wp-content/uploads/2025/05/505455/312.jpg 1536w" sizes="(max-width: 210px) 100vw, 210px" /></a>
+                    <p class=title>Хакер #312. Minecraft по-хакерски</p>
+                  </div>
+                </div><div class="bd-col-xs-4 bd-col-sm-3 bd-col-md-2 ">
+                  <div class=img-wrap>
+                    <a href="/issues/xa/311"><img width="210" height="280" src="https://xakep.ru/wp-content/uploads/2025/04/502396/311-210x280.jpg" class="attachment-medium size-medium wp-post-image" alt="" decoding="async" loading="lazy" srcset="https://xakep.ru/wp-content/uploads/2025/04/502396/311-210x280.jpg 210w, https://xakep.ru/wp-content/uploads/2025/04/502396/311-70x93.jpg 70w, https://xakep.ru/wp-content/uploads/2025/04/502396/311-768x1024.jpg 768w, https://xakep.ru/wp-content/uploads/2025/04/502396/311-1152x1536.jpg 1152w, https://xakep.ru/wp-content/uploads/2025/04/502396/311.jpg 1536w" sizes="(max-width: 210px) 100vw, 210px" /></a>
+                    <p class=title>Хакер #311. Сетевые протоколы под микроскопом</p>
+                  </div>
+                </div><div class="bd-col-xs-4 bd-col-sm-3 bd-col-md-2 ">
+                  <div class=img-wrap>
+                    <a href="/issues/xa/310"><img width="210" height="280" src="https://xakep.ru/wp-content/uploads/2024/12/494968/310-210x280.jpg" class="attachment-medium size-medium wp-post-image" alt="" decoding="async" loading="lazy" srcset="https://xakep.ru/wp-content/uploads/2024/12/494968/310-210x280.jpg 210w, https://xakep.ru/wp-content/uploads/2024/12/494968/310-70x93.jpg 70w, https://xakep.ru/wp-content/uploads/2024/12/494968/310-768x1024.jpg 768w, https://xakep.ru/wp-content/uploads/2024/12/494968/310-1152x1536.jpg 1152w, https://xakep.ru/wp-content/uploads/2024/12/494968/310.jpg 1536w" sizes="(max-width: 210px) 100vw, 210px" /></a>
+                    <p class=title>Хакер #310. Хакеры.RU</p>
+                  </div>
+                </div><div class="bd-col-xs-4 bd-col-sm-3 bd-col-md-2 ">
+                  <div class=img-wrap>
+                    <a href="/issues/xa/309"><img width="210" height="280" src="https://xakep.ru/wp-content/uploads/2025/03/491820/309-210x280.jpg" class="attachment-medium size-medium wp-post-image" alt="" decoding="async" loading="lazy" srcset="https://xakep.ru/wp-content/uploads/2025/03/491820/309-210x280.jpg 210w, https://xakep.ru/wp-content/uploads/2025/03/491820/309-70x93.jpg 70w, https://xakep.ru/wp-content/uploads/2025/03/491820/309-768x1024.jpg 768w, https://xakep.ru/wp-content/uploads/2025/03/491820/309-1152x1536.jpg 1152w, https://xakep.ru/wp-content/uploads/2025/03/491820/309.jpg 1536w" sizes="(max-width: 210px) 100vw, 210px" /></a>
+                    <p class=title>Хакер #309. Самооборона по-хакерски</p>
+                  </div>
+                </div>      
+
+
+
+            </div>
+            <div class="cfix"></div>
+          </div>
+        </div>
+      
+      <div class="cfix"></div>
+    </div>
+  </div>
+</nav>
+<div class="cfix"></div>
+
+
+</div>
+
+
+				<div class='bdaia-post-style7-head'><a class='bdaia-featured-img-cover' style='background-image:url(https://xakep.ru/wp-content/uploads/2024/10/485398/sawmill-socials.jpg);'></a><div class="bd-container"><header class="bdaia-post-header">
+          <div class="bdaia-category"><a class='bd-cat-link bd-cat-4927' href='https://xakep.ru/category/hack/'>Взлом</a></div>
+          <div class="bdaia-post-title"><a href="https://xakep.ru/2024/10/04/nuclei-openapi/"><h1 class="post-title entry-title">Потрошилка API. Используем Nuclei и кастомные шаблоны для фаззинга OpenAPI</h1></a></div>
+          
+<div class="bdaia-meta-info">
+
+	<div class="bdaia-post-author-name">
+				<a href="https://xakep.ru/author/c0de4you/" title="Записи Всеволод Дергунов" rel="author">Всеволод Дергунов</a>			</div><div class="bdaia-post-author-name">
+				<a href="https://xakep.ru/author/jojoiso/" title="Записи Евгений Гриценко" rel="author">Евгений Гриценко</a>			</div>
+			<div class="bdaia-post-date"><span class='bdayh-date'>04.10.2024</span></div>
+	
+	
+			<div class="bdaia-post-comment">
+			<span class='bdaia-io bdaia-io-bubble'></span>
+			<a href='#postbottom'>1 комментарий</a>
+					</div>
+	
+			<div class="bdaia-post-view">
+			<span class='bdaia-io bdaia-io-eye4'></span>
+			17,724		</div>
+	
+			<div class="bdaia-post-like"><div id='bookmark' data-pid=485398></div></div>
+	
+</div>
+<!-- END Meta Info. -->          <div class="bdaia-post-read-down"><a href="#"><span class="bdaia-io bdaia-io-angle-double-down"></span></a></div>
+        </header></div><img class='bdaia-featured-img-mobile' src='https://xakep.ru/wp-content/uploads/2024/10/485398/sawmill-socials.jpg' /></div>				
+								
+									<div class="cfix"></div>
+					<div class="bdaia-hibryd-e3">
+						
+						</div>
+					<div class="cfix"></div>
+																				<div class="bdMain">
+<style type=text/css>
+  .bdaia-post-template-style7 .bdaia-featured-img-mobile {display:none;margin: 20px auto 0;}
+  @media only screen and (max-width: 767px) {
+    .bdaia-post-template-style7 .bdaia-post-style7-head {background-color:transparent;margin:15px 0 -5px;}
+    .bdaia-post-template-style7 .bdaia-post-style7-head * {color:#222; text-shadow:none;}
+    .bdaia-post-template-style7 .bdaia-post-style7-head .bd-container{height:auto; padding:0;}
+    .bdaia-post-template-style7 .bdaia-post-style7-head .bdaia-post-header{position:relative; text-align:left; padding:0;}
+    .bdaia-post-template-style7 .bdaia-post-style7-head .bdaia-meta-info {margin:0;}
+    .bdaia-post-template-style7 .bdaia-post-style7-head .bdaia-meta-info * {color:#444;}
+    .bdaia-post-template-style7 .bdaia-featured-img-mobile {display:block;}
+
+    .bdaia-post-template-style7 #content .bdaia-post-style7-head{margin:20px auto;}
+    .bdaia-post-template-style7 #content .bdaia-post-style7-head .bd-container{width:100% !important; max-width:100% !important; padding:0;}
+
+    #navigation .secondary-menu,
+    .bdaia-post-template-style7 .bdaia-featured-img-cover,
+    .bdaia-post-template-style7 .bdaia-post-style7-head .bdaia-category,
+    .bdaia-post-template-style7 .bdaia-post-style7-head .bdaia-post-time-read,
+    .bdaia-post-template-style7 .bdaia-post-style7-head .bdaia-post-read-down,
+    #amp-link{display:none !important;}
+    #bookmark, #bookmark .add, #bookmark .add *{color:#444;}
+    #bookmark:hover, #bookmark .del, #bookmark .del *{color:#d20;}
+  }
+  @media only screen and (max-width: 480px) {
+    .bdaia-post-template-style7 .bdaia-post-style7-head .bd-container{padding:0 10px;}
+  }
+  </style>
+<!--div id=amp-link><a href=https://xakep.ru/2024/10/04/nuclei-openapi/?amp>Мобильная версия статьи</a></div-->
+<div class="bd-container bdaia-post-template">
+  <div class="bd-main bdaia-site-content" id="bdaia-primary">
+
+    <div id="content" role="main"><article id="post-485398" data-id="485398" class="hentry post-485398 post type-post status-publish format-standard has-post-thumbnail category-hack tag-api tag-nuclei tag-openapi tag-vybor-redaktora tag-articles tag-fazzing" itemscope itemtype="http://schema.org/Article">
+                  <div class="bdaia-post-content can_read">
+            <div id="sticker"><div class="theiaStickySidebar"></div></div>
+            <div id=toc><h3>Содержание статьи</h3><ul><li class=h2 data-id=01.><a href=#toc01.>Эффективность DAST</a></li><li class=h2 data-id=02.><a href=#toc02.>Фаззинг с Nuclei</a></li><li class=h2 data-id=03.><a href=#toc03.>Сканирование с аутентификацией</a></li><li class=h2 data-id=04.><a href=#toc04.>Подготавливаем OpenAPI</a></li><li class=h2 data-id=05.><a href=#toc05.>Пишем кастомные шаблоны Nuclei</a></li><li class=h3 data-id=05.1><a href=#toc05.1>Раскрытие информации</a></li><li class=h3 data-id=05.2><a href=#toc05.2>SQL-инъекции</a></li><li class=h3 data-id=05.3><a href=#toc05.3>Уязвимость Broken Object Level Authorization</a></li><li class=h3 data-id=05.4><a href=#toc05.4>Сканируем стенд</a></li><li class=h2 data-id=06.><a href=#toc06.>Nuclei в CI/CD</a></li><li class=h2 data-id=07.><a href=#toc07.>Выводы</a></li></ul></div><article id=article485398 class='xmd hack'><div id="lead1" class="lead">В этой статье мы рас­ска­жем о ска­ниро­вании API веб‑при­ложе­ний с помощью ути­литы Nuclei. Для демонс­тра­ции мы будем ата­ковать заведо­мо уяз­вимое при­ложе­ние, исполь­зующее OpenAPI. По дороге научим­ся писать кас­томные шаб­лоны для Nuclei, которые помогут искать уяз­вимос­ти на авто­мате.</div>
+<div id=toc01. class=toch>&nbsp;</div><h2>Эффективность DAST</h2>
+<p id="p1">Ди­нами­чес­кое ска­ниро­вание (DAST) — один из важ­ных эта­пов ана­лиза защищен­ности при­ложе­ния. Будь то пен­тест или про­цес­сы application security, в любом слу­чае мы запус­каем ска­нер уяз­вимос­тей, который отправ­ляет к при­ложе­нию мно­жес­тво зап­росов и пыта­ется выявить проб­лемы безопас­ности.</p>
+<p id="p2">Од­нако DAST не лишен недос­татков.</p><div class="bdaia-p-inline-e3-desktop"><div class="bdaia-e3-container"></div></div>
+<p id="p3">Во‑пер­вых, нас­трой­ки ска­неров по умол­чанию не всег­да поз­воля­ют прой­ти валида­цию, так как не учи­тыва­ются осо­бен­ности кон­крет­ных зап­росов к API, нап­ример, что в одном из парамет­ров дол­жен быть UUID.</p>
+<p id="p4">Во‑вто­рых, ска­нер по умол­чанию ничего не зна­ет про аутен­тифика­цию. Если его зап­росы не содер­жат bearer-токен или cookie, то мы прос­то получим ошиб­ку, не дой­дя до проб­лемы.</p>
+<p id="p5">В‑треть­их, это отчет, в котором может быть отме­чено мно­жес­тво нез­начитель­ных недос­татков безопас­ности, что меша­ет заметить реаль­но важ­ные уяз­вимос­ти и уде­лить им вре­мя.</p>
+<p id="p6">В этой статье я покажу, как улуч­шить DAST, нас­тро­ив динами­чес­кое ска­ниро­вание под кон­крет­ное при­ложе­ние с помощью аутен­тифика­ции и фаз­зинга OpenAPI, на при­мере ска­нера уяз­вимос­тей Nuclei. Так­же напишем три кас­томных шаб­лона для нахож­дения уяз­вимос­тей:</p>
+<ol id="ol1">
+<li id="li1">Раз­гла­шение информа­ции.
+</li>
+<li id="li2">Error based SQL-инъ­екции.
+</li>
+<li id="li3">Broken Object Level Authorization.
+</li>
+</ol>
+<p id="p7">В качес­тве подопыт­ного возь­мем <a id="link1" href="https://github.com/erev0s/VAmPI">VAmPI</a> — спе­циаль­ное уяз­вимое при­ложе­ние для тес­тирова­ния защищен­ности API. У него есть под­дер­жка OpenAPI и показа­тель­ные при­меры небезо­пас­ной реали­зации. Что­бы его уста­новить, дос­таточ­но кло­ниро­вать репози­торий и запус­тить <code id="code1">docker <wbr></wbr>compose</code>:</p>
+<code id="code2" class="highlight shell"><div class="wrapper"><div class="l l1"><span class="none">git </span><span class="none">clone </span><span class="none">https:/</span><span class="none">/</span><span class="none">github.</span><span class="none">com/</span><span class="none">erev0s/</span><span class="none">VAmPI
+</span></div><div class="l l2"><span class="nb">cd </span><span class="none">VAmPI
+</span></div><div class="l l3"><span class="none">docker </span><span class="none">compose </span><span class="none">up
+</span></div></div></code><p id="p8">Так­же необ­ходимо ини­циали­зиро­вать базу дан­ных, отпра­вив GET-зап­рос:</p>
+<div id="panel1" class="panel term"><div class="term-inner">
+<p id="p9">curl http://127.0.0.1:5002/createdb<br>{ "message": "Database populated." }</p>
+</div></div>
+<p id="p10">Для начала запус­тим Nuclei с нас­трой­ками по умол­чанию (дос­таточ­но передать цель для ска­ниро­вания):</p>
+<code id="code3" class="highlight shell"><div class="wrapper"><div class="l l1"><span class="none">nuclei </span><span class="nt">-u</span><span class="none"> </span><span class="none">http:/</span><span class="none">/</span><span class="none">127.</span><span class="none">0.</span><span class="none">0.</span><span class="none">1:</span><span class="none">5002
+</span></div></div></code><figure id="figure1" class="wp-caption no-text"><img decoding="async" src="https://static.xakep.ru/images/5069812f00032855edd87dd1cbf81905/38465/0.png" alt="" title=""><figcaption class="wp-caption-text"></figcaption></figure><p id="p11">При таком запус­ке Nuclei исполь­зует встро­енные шаб­лоны. В резуль­тате видим лож­нополо­житель­ные резуль­таты и информа­цион­ные замеча­ния, которые могут быть полез­ны толь­ко на эта­пе сбо­ра информа­ции при пен­тесте.</p>
+<p id="p12">На­ша цель — най­ти <strong>ре­аль­ные проб­лемы</strong>, поэто­му мы напишем кас­томные шаб­лоны для ска­ниро­вания извес­тно­го REST API на уяз­вимос­ти, наличие которых мы можем пред­полагать из понима­ния реали­зации. В этом нам помогут воз­можнос­ти, которые появи­лись в Nuclei вер­сии 3.2.</p>
+<div id=toc02. class=toch>&nbsp;</div><h2>Фаззинг с Nuclei</h2>
+<p id="p13">Ес­ли у при­ложе­ния мно­го эндпо­интов HTTP, каж­дый из которых может обра­баты­вать мно­жес­тво парамет­ров, про­вер­ка ста­новит­ся уто­митель­ной.</p>
+<p id="p14">Ав­томати­зиро­вать ана­лиз защищен­ности круп­ных API помога­ет фаз­зинг — тех­ника, которая пос­ледова­тель­но при­меня­ет набор про­верок ко всем воз­можным вари­ациям зап­росов к при­ложе­нию.</p>
+<p id="p15">Мы можем передать реаль­ные зап­росы из дам­па тра­фика дру­гих инс­тру­мен­тов, логов или спе­цифи­кации OpenAPI в Nuclei. Оста­новим­ся на OpenAPI, так как ее под­дер­жка есть у мно­гих сов­ремен­ных веб‑при­ложе­ний и в отли­чие от сбо­ра тра­фика такой метод не тре­бует активных дей­ствий.</p>
+<p id="p16">Пе­редать OpenAPI в Nuclei мож­но сле­дующим обра­зом:</p>
+<code id="code4" class="highlight javascript"><div class="wrapper"><div class="l l1"><span class="nx">nuclei</span> <span class="o">-</span><span class="nx">l</span> <span class="nx">openapi</span><span class="p">.</span><span class="nx">json</span> <span class="o">-</span><span class="nx">im</span> <span class="nx">openapi</span> <span class="o">-</span><span class="nx">t</span> <span class="nx">templates</span></div></div></code><p id="p17">При­мер шаб­лона для фаз­зинга:</p>
+<code id="code5" class="highlight yaml"><div class="wrapper"><div class="l l1"><span class="na">http</span><span class="pi">:</span></div><div class="l l2">    <span class="c1"># </span><span class="c1">Filter </span><span class="c1">checks </span><span class="c1">if </span><span class="c1">the </span><span class="c1">template </span><span class="c1">should </span><span class="c1">be </span><span class="c1">executed </span><span class="c1">on </span><span class="c1">a </span><span class="c1">given </span><span class="c1">request</span></div><div class="l l3">  <span class="pi">-</span> <span class="na">pre-condition</span><span class="pi">:</span></div><div class="l l4"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">dsl</span></div><div class="l l5"><span class="none">       </span><span class="none"> </span><span class="na">dsl</span><span class="pi">:</span></div><div class="l l6"><span class="none">         </span><span class="none"> </span><span class="pi">-</span> <span class="s">method </span><span class="s">== </span><span class="s">POST</span></div><div class="l l7"><span class="none">         </span><span class="none"> </span><span class="pi">-</span> <span class="s">len(</span><span class="s">body) </span><span class="s">&gt;</span><span class="s"> </span><span class="m">0</span></div><div class="l l8"><span class="none">       </span><span class="none"> </span><span class="na">condition</span><span class="pi">:</span> <span class="s">and</span></div><div class="l l9">    <span class="c1"># </span><span class="c1">Payloads </span><span class="c1">that </span><span class="c1">will </span><span class="c1">be </span><span class="c1">used </span><span class="c1">in </span><span class="c1">fuzzing</span></div><div class="l l10">    <span class="na">payloads</span><span class="pi">:</span></div><div class="l l11"><span class="none">     </span><span class="none"> </span><span class="na">injection</span><span class="pi">:</span> <span class="c1"># </span><span class="c1">Variable </span><span class="c1">name </span><span class="c1">for </span><span class="c1">payload</span></div><div class="l l12"><span class="none">       </span><span class="none"> </span><span class="pi">-</span> <span class="s2">"</span><span class="s">'"</span></div><div class="l l13"><span class="none">       </span><span class="none"> </span><span class="pi">-</span> <span class="s2">"</span><span class="se">\</span><span class="se">"</span><span class="s">"</span></div><div class="l l14"><span class="none">       </span><span class="none"> </span><span class="pi">-</span> <span class="s2">"</span><span class="s">;</span><span class="s">"</span></div><div class="l l15">    <span class="c1"># </span><span class="c1">Fuzzing </span><span class="c1">rules</span></div><div class="l l16">    <span class="na">fuzzing</span><span class="pi">:</span></div><div class="l l17"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="na">part</span><span class="pi">:</span> <span class="s">body</span>  <span class="c1"># </span><span class="c1">This </span><span class="c1">rule </span><span class="c1">will </span><span class="c1">be </span><span class="c1">applied </span><span class="c1">to </span><span class="c1">the </span><span class="c1">Body</span></div><div class="l l18"><span class="none">       </span><span class="none"> </span><span class="na">type</span><span class="pi">:</span> <span class="s">postfix</span> <span class="c1"># </span><span class="c1">Postfix </span><span class="c1">type </span><span class="c1">of </span><span class="c1">rule (</span><span class="c1">i. </span><span class="c1">e., </span><span class="c1">payload </span><span class="c1">will </span><span class="c1">be </span><span class="c1">added </span><span class="c1">at </span><span class="c1">the </span><span class="c1">end </span><span class="c1">of </span><span class="c1">exiting </span><span class="c1">value)</span></div><div class="l l19"><span class="none">       </span><span class="none"> </span><span class="na">mode</span><span class="pi">:</span> <span class="s">single</span>  <span class="c1"># </span><span class="c1">Single </span><span class="c1">mode (</span><span class="c1">i. </span><span class="c1">e., </span><span class="c1">existing </span><span class="c1">values </span><span class="c1">will </span><span class="c1">be </span><span class="c1">replaced </span><span class="c1">one </span><span class="c1">at </span><span class="c1">a </span><span class="c1">time)</span></div><div class="l l20"><span class="none">       </span><span class="none"> </span><span class="na">fuzz</span><span class="pi">:</span><span class="none">        </span><span class="none"> </span><span class="c1"># </span><span class="c1">Format </span><span class="c1">of </span><span class="c1">payload </span><span class="c1">to </span><span class="c1">be </span><span class="c1">injected</span></div><div class="l l21"><span class="none">         </span><span class="none"> </span><span class="pi">-</span> <span class="s1">'</span><span class="s">{{</span><span class="s">injection}}</span><span class="s">'</span> <span class="c1"># </span><span class="c1">Here, </span><span class="c1">we </span><span class="c1">are </span><span class="c1">directly </span><span class="c1">using </span><span class="c1">the </span><span class="c1">value </span><span class="c1">of </span><span class="c1">the </span><span class="c1">injection </span><span class="c1">variable</span></div></div></code><p id="p18">В шаб­лоне выше сек­ция <code id="code6">pre-condition</code> филь­тру­ет и запус­кает про­вер­ку толь­ко POST-зап­росов с непус­тым телом.</p>
+<code id="code7" class="highlight yaml"><div class="wrapper"><div class="l l1">  <span class="pi">-</span> <span class="na">pre-condition</span><span class="pi">:</span></div><div class="l l2"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">dsl</span></div><div class="l l3"><span class="none">       </span><span class="none"> </span><span class="na">dsl</span><span class="pi">:</span></div><div class="l l4"><span class="none">         </span><span class="none"> </span><span class="pi">-</span> <span class="s">method </span><span class="s">== </span><span class="s">POST</span></div><div class="l l5"><span class="none">         </span><span class="none"> </span><span class="pi">-</span> <span class="s">len(</span><span class="s">body) </span><span class="s">&gt;</span><span class="s"> </span><span class="m">0</span></div><div class="l l6"><span class="none">       </span><span class="none"> </span><span class="na">condition</span><span class="pi">:</span> <span class="s">and</span></div></div></code><p id="p19">Вот какие час­ти HTTP-зап­роса может фаз­зить Nuclei:</p>
+<ul id="ul1">
+<li id="li4">
+<code id="code8">part: <wbr></wbr>query</code> — парамет­ры зап­роса;
+</li>
+<li id="li5">
+<code id="code9">part: <wbr></wbr>path</code> — путь;
+</li>
+<li id="li6">
+<code id="code10">part: <wbr></wbr>header</code> — заголо­вок;
+</li>
+<li id="li7">
+<code id="code11">part: <wbr></wbr>cookie</code> — cookie;
+</li>
+<li id="li8">
+<code id="code12">part: <wbr></wbr>body</code> — тело зап­роса.
+</li>
+</ul>
+<p id="p20">Это далеко не все нас­трой­ки фаз­зинга Nuclei, но для наших целей дос­таточ­но.</p>
+<div id=toc03. class=toch>&nbsp;</div><h2>Сканирование с аутентификацией</h2>
+<p id="p21">Ес­ли зап­росы ска­нера не про­ходят даль­ше авто­риза­ции при­ложе­ния, то от него может быть мало поль­зы, так как мно­гие уяз­вимос­ти скры­вают­ся гораз­до глуб­же — в сло­ях с биз­нес‑логикой и в репози­тории.</p>
+
+
+
+<p id="p22">Для ска­ниро­вания с аутен­тифика­цией необ­ходимо соз­дать спе­циаль­ный файл и передать его Nuclei при ска­ниро­вании:</p>
+<code id="code13" class="highlight shell"><div class="wrapper"><div class="l l1"><span class="none">nuclei </span><span class="nt">-u</span><span class="none"> </span><span class="none">http:/</span><span class="none">/</span><span class="none">127.</span><span class="none">0.</span><span class="none">0.</span><span class="none">1:</span><span class="none">5002 </span><span class="nt">-secret-file</span><span class="none"> </span><span class="none">secrets.</span><span class="none">yaml
+</span></div></div></code><p id="p23">Под­держи­вают­ся сле­дующие виды аутен­тифика­ции:</p>
+<ul id="ul2">
+<li id="li9">Basic Auth;
+</li>
+<li id="li10">API Key;
+</li>
+<li id="li11">Bearer Token;
+</li>
+<li id="li12">Custom Header;
+</li>
+<li id="li13">Cookie.
+</li>
+</ul>
+<p id="p24">При­мер фай­ла аутен­тифика­ции:</p>
+<code id="code14" class="highlight yaml"><div class="wrapper"><div class="l l1"><span class="c1"># </span><span class="c1">static </span><span class="c1">secrets</span></div><div class="l l2"><span class="na">static</span><span class="pi">:</span></div><div class="l l3">  <span class="c1"># </span><span class="c1">1. </span><span class="c1">Basic </span><span class="c1">Auth </span><span class="c1">based </span><span class="c1">auth</span></div><div class="l l4">  <span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">basicauth</span></div><div class="l l5">    <span class="na">domains</span><span class="pi">:</span></div><div class="l l6"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="s">scanme.</span><span class="s">sh</span></div><div class="l l7">    <span class="na">username</span><span class="pi">:</span> <span class="s">test</span></div><div class="l l8">    <span class="na">password</span><span class="pi">:</span> <span class="s">test</span></div><div class="l l9"></div><div class="l l10">  <span class="c1"># </span><span class="c1">2. </span><span class="c1">API </span><span class="c1">Key (</span><span class="c1">via </span><span class="c1">query </span><span class="c1">parameters) </span><span class="c1">based </span><span class="c1">auth</span></div><div class="l l11">  <span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">query</span></div><div class="l l12">    <span class="na">domains</span><span class="pi">:</span></div><div class="l l13"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="s">example.</span><span class="s">com</span></div><div class="l l14">    <span class="na">params</span><span class="pi">:</span></div><div class="l l15"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="na">key</span><span class="pi">:</span> <span class="s">token</span></div><div class="l l16"><span class="none">       </span><span class="none"> </span><span class="na">value</span><span class="pi">:</span> <span class="s">1a2b3c4d5e6f7g8h9i0j</span></div><div class="l l17"></div><div class="l l18">  <span class="c1"># </span><span class="c1">3. </span><span class="c1">Bearer </span><span class="c1">Token </span><span class="c1">based </span><span class="c1">auth</span></div><div class="l l19">  <span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">bearertoken</span></div><div class="l l20">    <span class="na">domains-regex</span><span class="pi">:</span></div><div class="l l21"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="s">.</span><span class="s">*scanme.</span><span class="s">sh</span></div><div class="l l22"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="s">.</span><span class="s">*pdtm.</span><span class="s">sh</span></div><div class="l l23">    <span class="na">token</span><span class="pi">:</span> <span class="s">test</span></div><div class="l l24"></div><div class="l l25">  <span class="c1"># </span><span class="c1">4. </span><span class="c1">Custom </span><span class="c1">Header </span><span class="c1">based </span><span class="c1">auth</span></div><div class="l l26">  <span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">header</span></div><div class="l l27">    <span class="na">domains</span><span class="pi">:</span></div><div class="l l28"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="s">api.</span><span class="s">projectdiscovery.</span><span class="s">io</span></div><div class="l l29"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="s">cve.</span><span class="s">projectdiscovery.</span><span class="s">io</span></div><div class="l l30"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="s">chaos.</span><span class="s">projectdiscovery.</span><span class="s">io</span></div><div class="l l31">    <span class="na">headers</span><span class="pi">:</span></div><div class="l l32"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="na">key</span><span class="pi">:</span> <span class="s">x-pdcp-key</span></div><div class="l l33"><span class="none">       </span><span class="none"> </span><span class="na">value</span><span class="pi">:</span> <span class="s">&lt;</span><span class="s">api-key-here&gt;</span></div><div class="l l34"></div><div class="l l35">  <span class="c1"># </span><span class="c1">5. </span><span class="c1">Cookie </span><span class="c1">based </span><span class="c1">auth</span></div><div class="l l36">  <span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">cookie</span></div><div class="l l37">    <span class="na">domains</span><span class="pi">:</span></div><div class="l l38"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="s">scanme.</span><span class="s">sh</span></div><div class="l l39">    <span class="na">cookies</span><span class="pi">:</span></div><div class="l l40"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="na">key</span><span class="pi">:</span> <span class="s">PHPSESSID</span></div><div class="l l41"><span class="none">       </span><span class="none"> </span><span class="na">value</span><span class="pi">:</span> <span class="s">1a2b3c4d5e6f7g8h9i0j</span></div><div class="l l42"><span class="none">       </span><span class="none"> </span><span class="c1"># </span><span class="c1">raw: </span><span class="c1">"PHPSESSID=1a2b3c4d5e6f7g8h9i0j" (</span><span class="c1">an </span><span class="c1">alternative </span><span class="c1">way </span><span class="c1">to </span><span class="c1">specify </span><span class="c1">cookie </span><span class="c1">value)</span></div></div></code><div id=toc04. class=toch>&nbsp;</div><h2>Подготавливаем OpenAPI</h2>
+<p id="p25">OpenAPI — это не самая стро­гая спе­цифи­кация, а ее обра­бот­ка в Nuclei не иде­аль­на (по край­ней мере текущая реали­зация), поэто­му иног­да необ­ходимо редак­тирова­ние.</p>
+<p id="p26">На нашем стен­де с VAmPI по пути <code id="code15">/<wbr></wbr>ui/</code> рас­полага­ется Swagger UI.</p>
+<figure id="figure2" class="wp-caption no-text"><img decoding="async" src="https://static.xakep.ru/images/5069812f00032855edd87dd1cbf81905/38466/1.png" alt="" title=""><figcaption class="wp-caption-text"></figcaption></figure><p id="p27">Ска­чаем OpenAPI:</p>
+<code id="code16" class="highlight shell"><div class="wrapper"><div class="l l1"><span class="none">wget </span><span class="none">http:/</span><span class="none">/</span><span class="none">127.</span><span class="none">0.</span><span class="none">0.</span><span class="none">1:</span><span class="none">5002/</span><span class="none">openapi.</span><span class="none">json
+</span></div></div></code><p id="p28">Ес­ли поп­робовать запус­тить Nuclei со ска­чан­ной спе­цифи­каци­ей, будет ошиб­ка.</p>
+<div id="panel2" class="panel term"><div class="term-inner">
+
+[WRN] Could not generate requests from op: could not dump request: unsupported protocol scheme ""
+
+</div></div>
+<p id="p29">Ошиб­ка тре­бует, что­бы в OpenAPI был явно задан URL тес­тиру­емо­го при­ложе­ния. Давай это испра­вим.</p>
+<figure id="figure3" class="wp-caption no-text"><img decoding="async" src="https://static.xakep.ru/images/5069812f00032855edd87dd1cbf81905/38467/2.png" alt="" title=""><figcaption class="wp-caption-text"></figcaption></figure><p id="p30">Ес­ли сно­ва попытать­ся запус­тить ска­ниро­вание, получим еще одну ошиб­ку.</p>
+<div id="panel3" class="panel term"><div class="term-inner">
+
+[WRN] Could not generate requests from op: [openapi:RUNTIME] security scheme (bearer) name is empty
+
+</div></div>
+<p id="p31">На этот раз Nuclei не нра­вит­ся пус­той мас­сив <code id="code17">bearerAuth</code> в сек­ции <code id="code18">security</code>, хотя имен­но так <a id="link2" href="https://swagger.io/docs/specification/authentication/bearer-authentication/">за­дан</a> при­мер bearer-аутен­тифика­ции на сай­те самой OpenAPI.</p>
+<p id="p32">Нас это не оста­новит: мы прос­то вез­де убе­рем сек­цию <code id="code19">security</code>. Вруч­ную это делать не советую, есть замеча­тель­ная ути­лита <code id="code20">jq</code>, с помощью которой мы спра­вим­ся с этим одной коман­дой:</p>
+<code id="code21" class="highlight shell"><div class="wrapper"><div class="l l1">jq <span class="s1">'del(.. </span><span class="s1">| .</span><span class="s1">security?)</span><span class="s1">'</span><span class="none"> </span><span class="none">openapi.</span><span class="none">json </span><span class="o">&gt;</span><span class="none"> </span><span class="none">openapi_</span><span class="none">done.</span><span class="none">json
+</span></div></div></code><p id="p33">Так­же, если нам хочет­ся работать с фаз­зингом парамет­ров в path, c текущей реали­заци­ей Nuclei у нас это сде­лать нор­маль­но не получит­ся, потому что он работа­ет с <code id="code22">path</code> как с пол­ной стро­кой, а не как с отдель­ными парамет­рами.</p>
+<div id="panel4" class="panel info"><div class="info-inner">
+<h4>info</h4>
+<p id="p34">В про­цес­се иссле­дова­ния я отпра­вил репорт раз­работ­чикам Nuclei и пред­ложил дорабо­тать этот момент. Репорт <a id="link3" href="https://github.com/projectdiscovery/nuclei/issues/5495">при­няли</a>, и он даже нашел одоб­рение со сто­роны CTO раз­работ­чика.</p>
+</div></div>
+<p id="p35">А пока что к момен­ту, ког­да зап­росы пос­тупа­ют на фаз­зинг, в <code id="code23">path</code> вмес­то парамет­ров в фигур­ных скоб­ках уже под­став­лены зна­чения из OpenAPI <code id="code24">example</code> для это­го парамет­ра. Что­бы обой­ти эту проб­лему, мы исполь­зуем неболь­шой хак: поменя­ем зна­чения в <code id="code25">example</code> на <code id="code26">name</code>, что­бы в URL при фаз­зинге были име­на парамет­ров.</p>
+<figure id="figure4" class="wp-caption no-text"><img decoding="async" src="https://static.xakep.ru/images/5069812f00032855edd87dd1cbf81905/38468/3.png" alt="" title=""><figcaption class="wp-caption-text"></figcaption></figure><p id="p36">Ес­тес­твен­но, руками мы это делать тоже не будем. Сно­ва вос­поль­зуем­ся <code id="code27">jq</code>:</p>
+<code id="code28" class="highlight shell"><div class="wrapper"><div class="l l1">jq <span class="s1">'walk(</span><span class="s1">if </span><span class="s1">type </span><span class="s1">== </span><span class="s1">"object" </span><span class="s1">and </span><span class="s1">has(</span><span class="s1">"in") </span><span class="s1">and .</span><span class="s1">in </span><span class="s1">== </span><span class="s1">"path" </span><span class="s1">then .</span><span class="s1">schema.</span><span class="s1">example </span><span class="s1">= .</span><span class="s1">name </span><span class="s1">else . </span><span class="s1">end)</span><span class="s1">'</span><span class="none"> </span><span class="none">openapi.</span><span class="none">json </span><span class="o">&gt;</span><span class="none"> </span><span class="none">openapi_</span><span class="none">done.</span><span class="none">json
+</span></div></div></code><p id="p37">И что­бы не выпол­нять все эти три дей­ствия каж­дый раз, соберем одну коман­ду jq, которая пре­обра­зует всё сра­зу:</p>
+<ul id="ul3">
+<li id="li14">уда­ляет все свой­ства <code id="code29">security</code> на любом уров­не вло­жен­ности;
+</li>
+<li id="li15">ус­танав­лива­ет свой­ство <code id="code30">servers</code> на пер­вом уров­не вло­жен­ности в зна­чение <code id="code31">[{<wbr></wbr>"url": <wbr></wbr>"http://<wbr></wbr>127.<wbr></wbr>0.<wbr></wbr>0.<wbr></wbr>1:<wbr></wbr>5002"}<wbr></wbr>]</code>;
+</li>
+<li id="li16">для всех парамет­ров <code id="code32">path</code> из спе­цифи­кации OpenAPI меня­ет зна­чение свой­ства <code id="code33">example</code> на <code id="code34">name</code> самого парамет­ра.
+</li>
+</ul>
+<code id="code35" class="highlight shell"><div class="wrapper"><div class="l l1">jq <span class="s1">'</span></div><div class="l l2"><span class="s1">  </span><span class="s1">del(.. </span><span class="s1">| .</span><span class="s1">security?) </span><span class="s1">|</span></div><div class="l l3"><span class="s1">  .</span><span class="s1">servers </span><span class="s1">= [{</span><span class="s1">"url": </span><span class="s1">"http://</span><span class="s1">127.</span><span class="s1">0.</span><span class="s1">0.</span><span class="s1">1:</span><span class="s1">5002"}] </span><span class="s1">|</span></div><div class="l l4"><span class="s1">  </span><span class="s1">walk(</span></div><div class="l l5"><span class="s1">    </span><span class="s1">if </span><span class="s1">type </span><span class="s1">== </span><span class="s1">"object" </span><span class="s1">and </span><span class="s1">has(</span><span class="s1">"in") </span><span class="s1">and .</span><span class="s1">in </span><span class="s1">== </span><span class="s1">"path" </span><span class="s1">then</span></div><div class="l l6"><span class="s1">      .</span><span class="s1">schema.</span><span class="s1">example </span><span class="s1">= .</span><span class="s1">name</span></div><div class="l l7"><span class="s1">    </span><span class="s1">else</span></div><div class="l l8"><span class="s1">      </span><span class="s1">.</span></div><div class="l l9"><span class="s1">    </span><span class="s1">end</span></div><div class="l l10"><span class="s1">  </span><span class="s1">)</span></div><div class="l l11"><span class="s1">'</span><span class="none"> </span><span class="none">openapi.</span><span class="none">json </span><span class="o">&gt;</span><span class="none"> </span><span class="none">openapi_</span><span class="none">done.</span><span class="none">json
+</span></div></div></code><p id="p38">Под­готовив OpenAPI, мы можем прис­тупить к написа­нию кас­томных шаб­лонов Nuclei для нашего при­ложе­ния.</p>
+<div id=toc05. class=toch>&nbsp;</div><h2>Пишем кастомные шаблоны Nuclei</h2>
+<p id="p39">Нач­нем с аутен­тифика­ции. Регис­три­руем двух поль­зовате­лей:</p>
+<code id="code36" class="highlight shell"><div class="wrapper"><div class="l l1">curl <span class="nt">-X</span> <span class="s1">'POST'</span> <span class="se">\</span><span class="se">\</span></div><div class="l l2">  <span class="s1">'http://</span><span class="s1">127.</span><span class="s1">0.</span><span class="s1">0.</span><span class="s1">1:</span><span class="s1">5002/</span><span class="s1">users/</span><span class="s1">v1/</span><span class="s1">register'</span> <span class="se">\</span><span class="se">\</span></div><div class="l l3">  <span class="nt">-H</span> <span class="s1">'accept: </span><span class="s1">application/</span><span class="s1">json'</span> <span class="se">\</span><span class="se">\</span></div><div class="l l4">  <span class="nt">-H</span> <span class="s1">'Content-Type: </span><span class="s1">application/</span><span class="s1">json'</span> <span class="se">\</span><span class="se">\</span></div><div class="l l5">  <span class="nt">-d</span> <span class="s1">'{</span></div><div class="l l6"><span class="s1">  </span><span class="s1">"email": </span><span class="s1">"alice@mail.</span><span class="s1">com",</span></div><div class="l l7"><span class="s1">  </span><span class="s1">"password": </span><span class="s1">"alice",</span></div><div class="l l8"><span class="s1">  </span><span class="s1">"username": </span><span class="s1">"alice"</span></div><div class="l l9"><span class="s1">}</span><span class="s1">'</span></div><div class="l l10"></div><div class="l l11"><span class="o">{</span><span class="s2">"message"</span>: <span class="s2">"Successfully </span><span class="s2">registered. </span><span class="s2">Login </span><span class="s2">to </span><span class="s2">receive </span><span class="s2">an </span><span class="s2">auth </span><span class="s2">token.</span><span class="s2">"</span>, <span class="s2">"status"</span>: <span class="s2">"success"</span><span class="o">}</span></div><div class="l l12"></div><div class="l l13">curl <span class="nt">-X</span> <span class="s1">'POST'</span> <span class="se">\</span><span class="se">\</span></div><div class="l l14">  <span class="s1">'http://</span><span class="s1">127.</span><span class="s1">0.</span><span class="s1">0.</span><span class="s1">1:</span><span class="s1">5002/</span><span class="s1">users/</span><span class="s1">v1/</span><span class="s1">register'</span> <span class="se">\</span><span class="se">\</span></div><div class="l l15">  <span class="nt">-H</span> <span class="s1">'accept: </span><span class="s1">application/</span><span class="s1">json'</span> <span class="se">\</span><span class="se">\</span></div><div class="l l16">  <span class="nt">-H</span> <span class="s1">'Content-Type: </span><span class="s1">application/</span><span class="s1">json'</span> <span class="se">\</span><span class="se">\</span></div><div class="l l17">  <span class="nt">-d</span> <span class="s1">'{</span></div><div class="l l18"><span class="s1">  </span><span class="s1">"email": </span><span class="s1">"bob@mail.</span><span class="s1">com",</span></div><div class="l l19"><span class="s1">  </span><span class="s1">"password": </span><span class="s1">"bob",</span></div><div class="l l20"><span class="s1">  </span><span class="s1">"username": </span><span class="s1">"bob"</span></div><div class="l l21"><span class="s1">}</span><span class="s1">'</span></div><div class="l l22"></div><div class="l l23"><span class="o">{</span><span class="s2">"message"</span>: <span class="s2">"Successfully </span><span class="s2">registered. </span><span class="s2">Login </span><span class="s2">to </span><span class="s2">receive </span><span class="s2">an </span><span class="s2">auth </span><span class="s2">token.</span><span class="s2">"</span>, <span class="s2">"status"</span>: <span class="s2">"success"</span><span class="o">}</span></div></div></code><p id="p40">Ло­гиним­ся от име­ни одно­го из них и получа­ем <code id="code37">auth_token</code>:</p>
+<code id="code38" class="highlight shell"><div class="wrapper"><div class="l l1">curl <span class="nt">-X</span> <span class="s1">'POST'</span> <span class="se">\</span><span class="se">\</span></div><div class="l l2">  <span class="s1">'http://</span><span class="s1">127.</span><span class="s1">0.</span><span class="s1">0.</span><span class="s1">1:</span><span class="s1">5002/</span><span class="s1">users/</span><span class="s1">v1/</span><span class="s1">login'</span> <span class="se">\</span><span class="se">\</span></div><div class="l l3">  <span class="nt">-H</span> <span class="s1">'accept: </span><span class="s1">application/</span><span class="s1">json'</span> <span class="se">\</span><span class="se">\</span></div><div class="l l4">  <span class="nt">-H</span> <span class="s1">'Content-Type: </span><span class="s1">application/</span><span class="s1">json'</span> <span class="se">\</span><span class="se">\</span></div><div class="l l5">  <span class="nt">-d</span> <span class="s1">'{</span></div><div class="l l6"><span class="s1">  </span><span class="s1">"password": </span><span class="s1">"bob",</span></div><div class="l l7"><span class="s1">  </span><span class="s1">"username": </span><span class="s1">"bob"</span></div><div class="l l8"><span class="s1">}</span><span class="s1">'</span></div><div class="l l9"></div><div class="l l10"><span class="o">{</span><span class="s2">"auth_token"</span>: <span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.</span><span class="s2">eyJleHAiOjE3MjI5Njk4MzgsImlhdCI6MTcyMjk2OTc3OCwic3ViIjoiYWxpY2UifQ.</span><span class="s2">BkZug8W447WMpKWlbQv_GlgTePh8ROoIC0LlLwd_pJk"</span>, <span class="s2">"message"</span>: <span class="s2">"Successfully </span><span class="s2">logged </span><span class="s2">in.</span><span class="s2">"</span>, <span class="s2">"status"</span>: <span class="s2">"success"</span><span class="o">}</span></div></div></code><p id="p41">Сос­тавля­ем незамыс­ловатый файл для аутен­тифика­ции:</p>
+<h5 id="h5-1">secrets.yaml</h5>
+<code id="code39" class="highlight yaml"><div class="wrapper"><div class="l l1"><span class="na">static</span><span class="pi">:</span></div><div class="l l2">  <span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">bearertoken</span></div><div class="l l3">    <span class="na">domains</span><span class="pi">:</span></div><div class="l l4"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="s">127.</span><span class="s">0.</span><span class="s">0.</span><span class="s">1:</span><span class="s">5002</span></div><div class="l l5">    <span class="na">token</span><span class="pi">:</span> <span class="s">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.</span><span class="s">eyJleHAiOjE3MjI5NDI2MjAsImlhdCI6MTcyMjk0MjU2MCwic3ViIjoiYm9iIn0.</span><span class="s">gXjM40hPihDDrKFhOIuZCRjGsxWJamWjATGAynEoW6w</span></div></div></code><p id="p42">На­конец‑то мож­но прис­тупить к шаб­лонам для уяз­вимос­тей.</p>
+<div id=toc05.1 class=toch>&nbsp;</div><h3>Раскрытие информации</h3>
+<p id="p43">На­пишем шаб­лон, который про­веря­ет все конеч­ные точ­ки API на рас­кры­тие чувс­тви­тель­ной информа­ции.</p>
+<p id="p44">В нашем учеб­ном при­мере уяз­вимость зак­люча­ется в рас­кры­тии паролей поль­зовате­лей. Что­бы обна­ружить пароли в отве­тах, мы добавим мат­чер с регуляр­ным выраже­нием.</p>
+<p id="p45">Так­же нуж­но задать усло­вие, опре­деля­ющее, какие эндпо­инты под­лежат про­вер­ке. Нам нуж­ны все, кро­ме <code id="code40">/<wbr></wbr>createdb</code>, который отве­чает за ини­циали­зацию базы и может поломать нам стенд.</p>
+<p id="p46">Что­бы сде­лать зап­рос на все под­ходящие эндпо­инты, мы ука­жем <code id="code41">part</code> фаз­зинга как <code id="code42">path</code>, а в качес­тве зна­чения, которое будем фаз­зить, исполь­зуем пус­тую стро­ку.</p>
+<h5 id="h5-2">templates/disclosure.yaml</h5>
+<code id="code43" class="highlight yaml"><div class="wrapper"><div class="l l1"><span class="na">id</span><span class="pi">:</span> <span class="s">disclosure</span></div><div class="l l2"><span class="na">info</span><span class="pi">:</span></div><div class="l l3">  <span class="na">name</span><span class="pi">:</span> <span class="s">disclosure</span></div><div class="l l4">  <span class="na">author</span><span class="pi">:</span> <span class="s">test</span></div><div class="l l5">  <span class="na">severity</span><span class="pi">:</span> <span class="s">high</span></div><div class="l l6"></div><div class="l l7"><span class="na">http</span><span class="pi">:</span></div><div class="l l8">  <span class="pi">-</span> <span class="na">pre-condition</span><span class="pi">:</span></div><div class="l l9"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">dsl</span></div><div class="l l10"><span class="none">       </span><span class="none"> </span><span class="na">negative</span><span class="pi">:</span> <span class="kc">true</span></div><div class="l l11"><span class="none">       </span><span class="none"> </span><span class="na">dsl</span><span class="pi">:</span></div><div class="l l12"><span class="none">         </span><span class="none"> </span><span class="pi">-</span> <span class="s1">'</span><span class="s">contains(</span><span class="s">path,</span><span class="s">"createdb")</span><span class="s">'</span></div><div class="l l13"></div><div class="l l14">    <span class="na">matchers</span><span class="pi">:</span></div><div class="l l15"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">regex</span></div><div class="l l16"><span class="none">       </span><span class="none"> </span><span class="na">regex</span><span class="pi">:</span></div><div class="l l17"><span class="none">       </span><span class="none"> </span><span class="pi">-</span> <span class="s1">'</span><span class="s">"password":\\</span><span class="s">s*".</span><span class="s">+"'</span></div><div class="l l18">    <span class="na">stop-at-first-match</span><span class="pi">:</span> <span class="kc">true</span></div><div class="l l19"></div><div class="l l20">    <span class="na">fuzzing</span><span class="pi">:</span></div><div class="l l21"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="na">part</span><span class="pi">:</span> <span class="s">path</span></div><div class="l l22"><span class="none">       </span><span class="none"> </span><span class="na">mode</span><span class="pi">:</span> <span class="s">single</span></div><div class="l l23"><span class="none">       </span><span class="none"> </span><span class="na">type</span><span class="pi">:</span> <span class="s">postfix</span></div><div class="l l24"><span class="none">       </span><span class="none"> </span><span class="na">fuzz</span><span class="pi">:</span></div><div class="l l25"><span class="none">         </span><span class="none"> </span><span class="pi">-</span> <span class="s2">"</span><span class="s">"</span></div></div></code><div id=toc05.2 class=toch>&nbsp;</div><h3>SQL-инъекции</h3>
+<p id="p47">Сле­дующим опре­делим шаб­лон, который отве­чает за поиск Error Based SQL-инъ­екций. Под­верга­ем про­вер­ке фаз­зингом все парамет­ры <code id="code44">path</code>, <code id="code45">query</code> и <code id="code46">body</code> всех эндпо­интов API (кро­ме <code id="code47">/<wbr></wbr>createdb</code>). В качес­тве мат­чера исполь­зуем регуляр­ные выраже­ния, которым могут соот­ветс­тво­вать сооб­щения об ошиб­ках SQL.</p>
+<h5 id="h5-3">templates/sqli.yaml</h5>
+<code id="code48" class="highlight yaml"><div class="wrapper"><div class="l l1"><span class="na">id</span><span class="pi">:</span> <span class="s">sqli</span></div><div class="l l2"><span class="na">info</span><span class="pi">:</span></div><div class="l l3">  <span class="na">name</span><span class="pi">:</span> <span class="s">sqli</span></div><div class="l l4">  <span class="na">author</span><span class="pi">:</span> <span class="s">test</span></div><div class="l l5">  <span class="na">severity</span><span class="pi">:</span> <span class="s">critical</span></div><div class="l l6"><span class="na">http</span><span class="pi">:</span></div><div class="l l7"></div><div class="l l8">  <span class="pi">-</span> <span class="na">pre-condition</span><span class="pi">:</span></div><div class="l l9"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">dsl</span></div><div class="l l10"><span class="none">       </span><span class="none"> </span><span class="na">negative</span><span class="pi">:</span> <span class="kc">true</span></div><div class="l l11"><span class="none">       </span><span class="none"> </span><span class="na">dsl</span><span class="pi">:</span></div><div class="l l12"><span class="none">         </span><span class="none"> </span><span class="pi">-</span> <span class="s1">'</span><span class="s">contains(</span><span class="s">path,</span><span class="s">"createdb")</span><span class="s">'</span></div><div class="l l13"></div><div class="l l14">    <span class="na">matchers</span><span class="pi">:</span></div><div class="l l15"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">regex</span></div><div class="l l16"><span class="none">       </span><span class="none"> </span><span class="na">regex</span><span class="pi">:</span></div><div class="l l17"><span class="none">         </span><span class="none"> </span><span class="pi">-</span> <span class="s2">"</span><span class="s">SELECT"</span></div><div class="l l18"><span class="none">         </span><span class="none"> </span><span class="pi">-</span> <span class="s2">"</span><span class="s">SQL"</span></div><div class="l l19"><span class="none">       </span><span class="none"> </span><span class="na">condition</span><span class="pi">:</span> <span class="s">or</span></div><div class="l l20">    <span class="na">stop-at-first-match</span><span class="pi">:</span> <span class="kc">true</span></div><div class="l l21"></div><div class="l l22">    <span class="na">payloads</span><span class="pi">:</span></div><div class="l l23"><span class="none">     </span><span class="none"> </span><span class="na">injection</span><span class="pi">:</span></div><div class="l l24"><span class="none">       </span><span class="none"> </span><span class="pi">-</span> <span class="s2">"</span><span class="s">'"</span></div><div class="l l25"><span class="none">       </span><span class="none"> </span><span class="pi">-</span> <span class="s2">"</span><span class="se">\</span><span class="se">"</span><span class="s">"</span></div><div class="l l26"><span class="none">       </span><span class="none"> </span><span class="pi">-</span> <span class="s2">"</span><span class="s">`"</span></div><div class="l l27"></div><div class="l l28">    <span class="na">fuzzing</span><span class="pi">:</span></div><div class="l l29"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="na">part</span><span class="pi">:</span> <span class="s">path</span></div><div class="l l30"><span class="none">       </span><span class="none"> </span><span class="na">type</span><span class="pi">:</span> <span class="s">postfix</span></div><div class="l l31"><span class="none">       </span><span class="none"> </span><span class="na">mode</span><span class="pi">:</span> <span class="s">single</span></div><div class="l l32"><span class="none">       </span><span class="none"> </span><span class="na">fuzz</span><span class="pi">:</span></div><div class="l l33"><span class="none">         </span><span class="none"> </span><span class="pi">-</span> <span class="s2">"</span><span class="s">{{</span><span class="s">injection}}</span><span class="s">"</span></div><div class="l l34"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="na">part</span><span class="pi">:</span> <span class="s">query</span></div><div class="l l35"><span class="none">       </span><span class="none"> </span><span class="na">type</span><span class="pi">:</span> <span class="s">postfix</span></div><div class="l l36"><span class="none">       </span><span class="none"> </span><span class="na">mode</span><span class="pi">:</span> <span class="s">single</span></div><div class="l l37"><span class="none">       </span><span class="none"> </span><span class="na">fuzz</span><span class="pi">:</span></div><div class="l l38"><span class="none">         </span><span class="none"> </span><span class="pi">-</span> <span class="s2">"</span><span class="s">{{</span><span class="s">injection}}</span><span class="s">"</span></div><div class="l l39"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="na">part</span><span class="pi">:</span> <span class="s">body</span></div><div class="l l40"><span class="none">       </span><span class="none"> </span><span class="na">type</span><span class="pi">:</span> <span class="s">postfix</span></div><div class="l l41"><span class="none">       </span><span class="none"> </span><span class="na">mode</span><span class="pi">:</span> <span class="s">single</span></div><div class="l l42"><span class="none">       </span><span class="none"> </span><span class="na">fuzz</span><span class="pi">:</span></div><div class="l l43"><span class="none">         </span><span class="none"> </span><span class="pi">-</span> <span class="s2">"</span><span class="s">{{</span><span class="s">injection}}</span><span class="s">"</span></div></div></code><div id=toc05.3 class=toch>&nbsp;</div><h3>Уязвимость Broken Object Level Authorization</h3>
+<p id="p48">Про­верим, пра­виль­но ли реали­зова­на авто­риза­ция. Может ли один поль­зователь получить неп­равомер­ный дос­туп к дан­ным, при­над­лежащим дру­гому? Так как в выб­ранном тес­товом стен­де такая уяз­вимость встре­чает­ся в path-парамет­рах, здесь мы сно­ва стал­кива­емся с огра­ниче­нием Nuclei, о котором я упо­минал выше. В слу­чае с <code id="code49">query</code> или <code id="code50">body</code> таких проб­лем нет. Но так как мы это уже пре­дус­мотре­ли, можем реали­зовать про­вер­ку и для path-парамет­ров тоже.</p>
+<p id="p49">Под­готовим стенд, соз­дав кни­гу от поль­зовате­ля <code id="code51">alice</code>:</p>
+<code id="code52" class="highlight shell"><div class="wrapper"><div class="l l1">curl <span class="nt">--location</span> <span class="s1">'http://</span><span class="s1">127.</span><span class="s1">0.</span><span class="s1">0.</span><span class="s1">1:</span><span class="s1">5002/</span><span class="s1">books/</span><span class="s1">v1'</span> <span class="se">\</span><span class="se">\</span></div><div class="l l2"><span class="nt">--header</span> <span class="s1">'Content-Type: </span><span class="s1">application/</span><span class="s1">json'</span> <span class="se">\</span><span class="se">\</span></div><div class="l l3"><span class="nt">--header</span> <span class="s1">'Authorization: </span><span class="s1">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.</span><span class="s1">eyJleHAiOjE3MjI5ODMwNTgsImlhdCI6MTcyMjk4Mjk5OCwic3ViIjoiYm9iIn0.</span><span class="s1">xDWXPKyfSEGtoIbQHI7Njd72byquLvg9f9RcRtU8ybM'</span> <span class="se">\</span><span class="se">\</span></div><div class="l l4"><span class="nt">--data</span> <span class="s1">'{</span></div><div class="l l5"><span class="s1">"book_title": </span><span class="s1">"alice_book",</span></div><div class="l l6"><span class="s1">"secret": </span><span class="s1">"ALICE_SECRET"</span></div><div class="l l7"><span class="s1">}</span><span class="s1">'</span></div><div class="l l8"></div><div class="l l9"><span class="o">{</span></div><div class="l l10"><span class="s2">"message"</span>: <span class="s2">"Book </span><span class="s2">has </span><span class="s2">been </span><span class="s2">added.</span><span class="s2">"</span>,
+</div><div class="l l11"><span class="s2">"status"</span>: <span class="s2">"success"</span></div><div class="l l12"><span class="o">}</span></div></div></code><p id="p50">Те­перь напишем шаб­лон, который про­веря­ет все path-парамет­ры с наз­вани­ем <code id="code53">book_title</code> на Broken Object Level Authorization, под­став­ляя наз­вание кни­ги <code id="code54">alice</code>. Про­вер­ка при этом будет про­водить­ся с аутен­тифика­цией от име­ни <code id="code55">bob</code>.</p>
+<p id="p51">Осо­бен­ность про­вер­ки <code id="code56">path</code> в том, что наз­вание парамет­ра дол­жно задавать­ся в свой­стве <code id="code57">values</code>, а так­же необ­ходимо исполь­зовать <code id="code58">type: <wbr></wbr>replace-regex</code>, что­бы заменить толь­ко иссле­дуемый параметр, а не весь <code id="code59">path</code>.</p>
+<p id="p52">В качес­тве мат­чера зада­ем поиск заранее извес­тно­го зна­чения, которое может быть дос­тупно толь­ко поль­зовате­лю <code id="code60">alice</code>.</p>
+<h5 id="h5-4">templates/bola.yaml</h5>
+<code id="code61" class="highlight yaml"><div class="wrapper"><div class="l l1"><span class="na">id</span><span class="pi">:</span> <span class="s">bola</span></div><div class="l l2"><span class="na">info</span><span class="pi">:</span></div><div class="l l3">  <span class="na">name</span><span class="pi">:</span> <span class="s">bola</span></div><div class="l l4">  <span class="na">author</span><span class="pi">:</span> <span class="s">test</span></div><div class="l l5">  <span class="na">severity</span><span class="pi">:</span> <span class="s">high</span></div><div class="l l6"></div><div class="l l7"><span class="na">http</span><span class="pi">:</span></div><div class="l l8">  <span class="pi">-</span> <span class="na">matchers</span><span class="pi">:</span></div><div class="l l9"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">word</span></div><div class="l l10"><span class="none">       </span><span class="none"> </span><span class="na">words</span><span class="pi">:</span></div><div class="l l11"><span class="none">         </span><span class="none"> </span><span class="pi">-</span> <span class="s2">"</span><span class="s">ALICE_SECRET"</span></div><div class="l l12"></div><div class="l l13">    <span class="na">fuzzing</span><span class="pi">:</span></div><div class="l l14"><span class="none">     </span><span class="none"> </span><span class="pi">-</span> <span class="na">part</span><span class="pi">:</span> <span class="s">path</span></div><div class="l l15"><span class="none">       </span><span class="none"> </span><span class="na">type</span><span class="pi">:</span> <span class="s">replace-regex</span></div><div class="l l16"><span class="none">       </span><span class="none"> </span><span class="na">replace-regex</span><span class="pi">:</span> <span class="s2">"</span><span class="s">book_title"</span></div><div class="l l17"><span class="none">       </span><span class="none"> </span><span class="na">mode</span><span class="pi">:</span> <span class="s">single</span></div><div class="l l18"><span class="none">       </span><span class="none"> </span><span class="na">values</span><span class="pi">:</span></div><div class="l l19"><span class="none">         </span><span class="none"> </span><span class="pi">-</span> <span class="s2">"</span><span class="s">book_title"</span></div><div class="l l20"><span class="none">       </span><span class="none"> </span><span class="na">fuzz</span><span class="pi">:</span></div><div class="l l21"><span class="none">         </span><span class="none"> </span><span class="pi">-</span> <span class="s2">"</span><span class="s">alice_book"</span></div></div></code><div id=toc05.4 class=toch>&nbsp;</div><h3>Сканируем стенд</h3>
+<p id="p53">За­пус­тим Nuclei с под­готов­ленной спе­цифи­каци­ей OpenAPI, нашими кас­томны­ми шаб­лонами фаз­зинга и аутен­тифика­цией на стен­де. В фай­ле аутен­тифика­ции дол­жен быть токен <code id="code62">bob</code>.</p>
+<code id="code63" class="highlight shell"><div class="wrapper"><div class="l l1"><span class="none">nuclei </span><span class="nt">-l</span><span class="none"> </span><span class="none">openapi.</span><span class="none">json </span><span class="nt">-im</span><span class="none"> </span><span class="none">openapi </span><span class="nt">-t</span><span class="none"> </span><span class="none">templates </span><span class="nt">-secret-file</span><span class="none"> </span><span class="none">secrets.</span><span class="none">yaml
+</span></div></div></code><figure id="figure5" class="wp-caption no-text"><img decoding="async" src="https://static.xakep.ru/images/5069812f00032855edd87dd1cbf81905/38469/4.png" alt="" title=""><figcaption class="wp-caption-text"></figcaption></figure><p id="p54">Ви­дим, что каж­дый шаб­лон нашел уяз­вимос­ти в API, на которые он был рас­счи­тан.</p>
+<div id=toc06. class=toch>&nbsp;</div><h2>Nuclei в CI/CD</h2>
+<p id="p55">На этом воз­можнос­ти Nuclei не закан­чива­ются, сов­ремен­ная раз­работ­ка — это неп­рерыв­ный про­цесс, а зна­чит, и про­вер­ки дол­жны быть неп­рерыв­ными!</p>
+<ul id="ul4">
+<li id="li17">Nuclei мож­но внед­рить в пай­плайн CI/CD GitLab или GitHub.
+</li>
+<li id="li18">Он поз­воля­ет соз­давать отче­ты и отправ­лять их в сис­темы управле­ния уяз­вимос­тей.
+</li>
+</ul>
+<p id="p56">Ин­тегра­ция безопас­ности в CI/CD повыша­ет защищен­ность раз­рабаты­ваемых при­ложе­ний бла­года­ря сис­темати­чес­кой про­вер­ке каж­дой сбор­ки или даже ком­мита. Кро­ме того, авто­мати­зация поз­воля­ет сок­ратить количес­тво рутин­ной работы и сос­редото­чить­ся на инте­рес­ных и нет­риви­аль­ных задачах.</p>
+<div id=toc07. class=toch>&nbsp;</div><h2>Выводы</h2>
+<p id="p57">С помощью кас­томных шаб­лонов для фаз­зинга и нас­тро­енной аутен­тифика­ции мы быс­тро наш­ли реаль­ные и опас­ные уяз­вимос­ти.</p>
+<p id="p58">Ос­новное дос­тоинс­тво опи­сан­ного под­хода в том, что мы про­веря­ем API тес­тиру­емо­го при­ложе­ния <strong>тар­гетиро­ван­но</strong> с уче­том необ­ходимо­го фор­мата зап­росов и не спо­тыка­емся о валида­цию и авто­риза­цию.</p>
+<p id="p59">Важ­ный плюс в том, что мы можем заново исполь­зовать один раз написан­ные шаб­лоны для новых вер­сий текуще­го при­ложе­ния, а так­же при­менять для дру­гих при­ложе­ний со спе­цифи­каци­ей OpenAPI.</p>
+<div id="panel5" class="panel www"><div class="www-inner">
+<h4>www</h4>
+<ul id="ul5">
+<li id="li19">
+<a id="link4" href="https://blog.projectdiscovery.io/nuclei-3-2/">Nuclei v3.2 Release with Authenticated Scanning, Advanced Fuzzing &amp; more</a>
+</li>
+<li id="li20">
+<a id="link5" href="https://blog.projectdiscovery.io/nuclei-fuzzing-for-unknown-vulnerabilities/">Fuzzing for Unknown Vulnerabilities with Nuclei v3.2</a>
+</li>
+<li id="li21">
+<a id="link6" href="https://blog.projectdiscovery.io/scanning-login-protected-targets-with-nuclei/">Scanning Login-Protected Targets with Nuclei v3.2</a>
+</li>
+<li id="li22">
+<a id="link7" href="https://docs.projectdiscovery.io/tools/nuclei/overview">Nuclei Overview</a>
+</li>
+<li id="li23">
+<a id="link8" href="https://docs.projectdiscovery.io/templates/introduction">Introduction to Nuclei Templates</a>
+</li>
+</ul>
+
+</div></div>
+</article></p>          </div>
+        <style>
+    #xakeprate{max-width: 300px;text-align: center;margin:0 auto 30px;}
+    #xakeprate h3,
+    #xakeprate h4,
+    #xakeprate h5,
+    #xakeprate h6{margin:0 0 8px;}
+    #xakeprate h4{font-size: 13px;}
+    #xakeprate label{cursor:pointer;white-space: nowrap;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+    #xakeprate .block-title{float:left;margin:0 0 5px;}
+    #xakeprate #stars{position:relative;top:-2px;direction:rtl;text-align:center;}
+    #xakeprate #stars input{display:none;}
+    #xakeprate #stars i{color:#ccc;font-size:30px;}
+    #xakeprate #stars label:hover ~ label i,
+    #xakeprate #stars label:hover i{color:#666;}
+    #xakeprate #stars label.checked ~ label i{color:#d20;}
+    #xakeprate #stars input:checked+i{color:#d20!important;}
+    #xakeprate .opinion{display:none;margin:10px auto 0;}
+    #xakeprate .opinion label{display:block;text-align:left;color:#666;margin:0 auto;}
+    #xakeprate .opinion label:hover span{color:#222;}
+    #xakeprate .opinion input:checked+span{color:#d20;font-weight:700;}
+    #xakeprate .opinion input{margin:0 4px 0 10px;}
+    #xakeprate .opinion button{width:120px;margin:10px auto;}
+    #xakeprate .opinion button:disabled{background-color:#ddd!important;}
+  </style>
+  <form id='xakeprate' action='https://xakep.ru/wp-admin/admin-ajax.php' method='post'>
+    <input type='hidden' name='action' value='xakeprate' />
+    <input type='hidden' name='id' value='485398' />
+    <!-- <h4 class="block-title"><span><span>Оцени статью:</span></span></h4> -->
+    <h4>Оцени статью:</h4>
+    <div id='stars'>
+      <label >
+        <input type='radio' name='rating' value=5 required />
+        <i class='fa fa-star'></i>
+      </label><label >
+        <input type='radio' name='rating' value=4 required />
+        <i class='fa fa-star'></i>
+      </label><label >
+        <input type='radio' name='rating' value=3 required />
+        <i class='fa fa-star'></i>
+      </label><label >
+        <input type='radio' name='rating' value=2 required />
+        <i class='fa fa-star'></i>
+      </label><label >
+        <input type='radio' name='rating' value=1 required />
+        <i class='fa fa-star'></i>
+      </label>    </div>
+    <div id='positive' class='opinion'>
+      <h6>Что тебе понравилось больше всего?</h6>
+      <!-- $rate->rating -->
+      <label>
+        <input type='radio' name='opinion' value='clear' required />
+        <span>Статья легкая и понятная</span>
+      </label><label>
+        <input type='radio' name='opinion' value='detailed' required />
+        <span>Статья глубокая и подробная</span>
+      </label><label>
+        <input type='radio' name='opinion' value='interest' required />
+        <span>Интересуюсь этой темой</span>
+      </label><label>
+        <input type='radio' name='opinion' value='actual' required />
+        <span>Данные новые и актуальные</span>
+      </label><label>
+        <input type='radio' name='opinion' value='nice' required />
+        <span>Приятный стиль изложения</span>
+      </label>      <button type='submit'>Оценить</button>
+    </div>
+    <div id='negative' class='opinion'>
+      <h6>Что тебе не понравилось больше всего?</h6>
+      <label>
+        <input type='radio' name='opinion' value='easy' required />
+        <span>Статья поверхностная</span>
+      </label><label>
+        <input type='radio' name='opinion' value='complex' required />
+        <span>Статья слишком сложная</span>
+      </label><label>
+        <input type='radio' name='opinion' value='blah' required />
+        <span>Тема мне не интересна</span>
+      </label><label>
+        <input type='radio' name='opinion' value='outdate' required />
+        <span>Данные устарели</span>
+      </label><label>
+        <input type='radio' name='opinion' value='ugly' required />
+        <span>Неприятный стиль изложения</span>
+      </label>      <button type='submit'>Оценить</button>
+    </div>
+    <div class='result'></div>
+  </form>
+  <script>jQuery(function($){
+      form = $('#xakeprate');
+      stars = form.find('#stars input');
+      button = form.find('button');
+      result = form.find('.result');
+
+      stars.on('change', function(e){
+        stars.parent().removeClass('checked');
+        $(this).parent().addClass('checked');
+        result.text('');
+        form.find('.opinion input').prop('checked', false);
+        if($(this).val() > 3){
+          form.find('#negative').hide();
+          form.find('#positive').show();
+        }else{
+          form.find('#negative').show();
+          form.find('#positive').hide();
+        }
+      });
+
+      form.on('submit', function(e){
+        e.preventDefault();
+        result.text('');
+        button.text('...');
+        button.prop('disabled', true);
+        $.ajax({
+          type:form.attr('method'), url:form.attr('action'), data:form.serialize()
+        }).done(function(data){
+          result.html(data);
+        }).fail(function(data){
+          console.log(data);
+          result.html('error');
+        }).always(function(data){
+          button.text('Повторить');
+          button.prop('disabled', false);
+        });
+      });
+  });</script>
+          <footer><div class="bdaia-author-box">
+		<div class="authorBlock-avatar">
+			<a href="https://xakep.ru/author/c0de4you/"><img alt='' src='https://secure.gravatar.com/avatar/daf6526995b976795aea34582192b3f4?s=150&#038;d=retro&#038;r=g' srcset='https://secure.gravatar.com/avatar/daf6526995b976795aea34582192b3f4?s=300&#038;d=retro&#038;r=g 2x' class='avatar avatar-150 photo' height='150' width='150' loading='lazy' decoding='async'/></a>
+		</div>
+
+		<div class="authorBlock-header">
+			<h3 class="authorBlock-header-title vcard author">
+				<span class="fn"><a href="https://xakep.ru/author/c0de4you/">Всеволод Дергунов</a></span>
+			</h3>
+
+			<p class="authorBlock-header-bio">
+							</p>
+
+			<div class="authorBlock-meta bdaia-social-io-colored">
+				<div class="bdaia-social-io bdaia-social-io-size-32">
+					
+									</div>
+			</div>
+		</div>
+	</div><!-- END Author Box. --><div class="bdaia-author-box">
+		<div class="authorBlock-avatar">
+			<a href="https://xakep.ru/author/jojoiso/"><img alt='' src='https://secure.gravatar.com/avatar/5db01ba73395ece30daa6968fa440508?s=150&#038;d=retro&#038;r=g' srcset='https://secure.gravatar.com/avatar/5db01ba73395ece30daa6968fa440508?s=300&#038;d=retro&#038;r=g 2x' class='avatar avatar-150 photo' height='150' width='150' loading='lazy' decoding='async'/></a>
+		</div>
+
+		<div class="authorBlock-header">
+			<h3 class="authorBlock-header-title vcard author">
+				<span class="fn"><a href="https://xakep.ru/author/jojoiso/">Евгений Гриценко</a></span>
+			</h3>
+
+			<p class="authorBlock-header-bio">
+							</p>
+
+			<div class="authorBlock-meta bdaia-social-io-colored">
+				<div class="bdaia-social-io bdaia-social-io-size-32">
+					<a class='bdaia-io-url-home' href='http://saintcode.ru'><span class='bdaia-io bdaia-io-home3'></span>saintcode.ru</a>
+									</div>
+			</div>
+		</div>
+	</div><!-- END Author Box. --><div class="clear"></div><div id="postbottom" class="tagcloud"><span>Теги:</span><a href="https://xakep.ru/tag/api/" rel="tag">API</a><a href="https://xakep.ru/tag/nuclei/" rel="tag">Nuclei</a><a href="https://xakep.ru/tag/openapi/" rel="tag">OpenAPI</a><a href="https://xakep.ru/tag/vybor-redaktora/" rel="tag">Выбор редактора</a><a href="https://xakep.ru/tag/articles/" rel="tag">Статьи</a><a href="https://xakep.ru/tag/fazzing/" rel="tag">фаззинг</a></div><div class="clear"></div>            <section id="bdCheckAlso" class="bdCheckAlso-right">
+
+	            <h4 class="block-title">
+		            <span>Check Also</span>
+
+		            <a href="#" id="check-also-close"><span class="bdaia-io bdaia-io-cross"></span></a>
+	            </h4>
+
+                                    <div class="check-also-post">
+                                                    <figure
+                                class="check-also-thumb"  style="background-image:url(https://xakep.ru/wp-content/uploads/2025/06/517276/crypto-drainers-320x220.jpg);">
+                            </figure>
+                        
+                        <h2 class="post-title"><a href="https://xakep.ru/2025/06/04/crypto-drainers/" rel="bookmark">Криптовалютный дренаж. Разбираемся с дрейнерами — новым видом скама, опустошающим криптокошельки</a></h2>
+
+                        <p>Дрейнеры — новый захлестнувший мир криптовалют вид фишинга. Он растет ударными темпами и у&#8230;</p>
+                    </div>
+                            </section>
+        </footer><div class="bdaia-post-next-prev"><div class="bdaia-post-prev-post"><a href="https://xakep.ru/2024/10/04/skidmap/" rel="prev"><span>&larr; Ранее</span> Уязвимые серверы Redis атакует майнер Skidmap, и его скрывает руткит</a></div><div class="bdaia-post-next-post"><a href="https://xakep.ru/2024/10/04/core-werewolf-attacks/" rel="next"><span>Далее &rarr;</span> Хакеры Core Werewolf продолжают атаки на российский ОПК</a></div></div><!-- END Previous/Next article. --><span style="display: none;" itemprop="author" itemscope="" itemtype="https://schema.org/Person">
+	<meta itemprop="name" content="Всеволод Дергунов">
+</span>
+<meta itemprop="interactionCount" content="UserComments:1">
+<meta itemprop="datePublished" content="2024-10-04T18:21:33+00:00">
+<meta itemprop="dateModified" content="2024-10-04T18:21:33+00:00">
+<meta itemscope="" itemprop="mainEntityOfPage" itemtype="https://schema.org/WebPage" itemid="https://xakep.ru/2024/10/04/nuclei-openapi/">
+<span style="display: none;" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization">
+	<span style="display: none;" itemprop="logo" itemscope="" itemtype="https://schema.org/ImageObject">
+		<meta itemprop="url" content="https://xakep.ru/wp-content/uploads/2018/09/x-new_6.png">
+	</span>
+	<meta itemprop="name" content="Хакер">
+</span>
+<meta itemprop="headline " content="Потрошилка API. Используем Nuclei и кастомные шаблоны для фаззинга OpenAPI">
+<span style="display: none;" itemprop="image" itemscope="" itemtype="https://schema.org/ImageObject">
+	<meta itemprop="url" content="https://xakep.ru/wp-content/uploads/2024/10/485398/sawmill-socials.jpg">
+	<meta itemprop="width" content="1600">
+	<meta itemprop="height" content="1067">
+</span></article><li id="block-2" class="widget-odd widget-last widget-first widget-1 widget widget_block"><style type="text/css">
+    .before-comments-telegram-container {
+      background-color: #0693e3;
+      color: white;
+      padding: 2rem;
+    }
+    .before-comments-telegram-container-icon {
+      float: left;
+      max-width: 8rem;
+      max-height: 8rem;
+      border-radius: 24px;
+    }
+    .before-comments-telegram-container-text {
+      margin-left: 6rem;
+    }
+    .before-comments-telegram-container-text > p {
+      margin-bottom: 0.5rem;
+    }
+    .before-comments-telegram-container-text > p > a {
+      display: inline-block;
+      background-color: white;
+      padding: 0.4rem 1rem;
+      font-size: larger;
+    }
+    .before-comments-telegram-container-text > a > h4{
+      margin-top: 0;
+      font-weight: bold;
+      color: white;
+    }
+    .before-comments-telegram-container-cf {
+      display: block;
+      clear: both;
+    }
+
+  </style>
+  <div class="before-comments-telegram-container">
+    <div class="before-comments-telegram-container-icon">
+      <img decoding="async" src="https://static.xakep.ru/assets/tlg-up-01.png">
+    </div>
+    <div class="before-comments-telegram-container-text">
+      <a href="https://t.me/xakep_ru">
+        <h4>Подпишись на наc в Telegram!</h4>
+      </a>
+      <p>Только важные новости и лучшие статьи</p>
+      <p>
+        <a href="https://t.me/xakep_ru">Подписаться</a>
+      </p>
+    </div>
+    <div class="before-comments-telegram-container-cf"></div>
+  </div></li>
+<div class='bdaia-load-comments-btn'><a href="https://xakep.ru/2024/10/04/nuclei-openapi/#comments">1 комментарий</a></div>    <div class="wpdiscuz_top_clearing"></div>
+    <div id='comments' class='comments-area'><div id='respond' style='width: 0;height: 0;clear: both;margin: 0;padding: 0;'></div>    <div id="wpdcom" class="wpdiscuz_auth wpd-default wpd-layout-3 wpd-comments-open">
+                    <div class="wc_social_plugin_wrapper">
+                            </div>
+            <div class="wpd-form-wrap">
+                <div class="wpd-form-head">
+                                            <div class="wpd-sbs-toggle">
+                            <i class="far fa-envelope"></i> <span
+                                    class="wpd-sbs-title">Подписаться</span>
+                            <i class="fas fa-caret-down"></i>
+                        </div>
+                                            <div class="wpd-auth">
+                                                <div class="wpd-login">
+                            Вы вошли как <a href='https://xakep.ru/author/winebrute/'>WineBrute</a> | <a href="https://xakep.ru/wp-login.php?action=logout&#038;redirect_to=https%3A%2F%2Fxakep.ru%2F2024%2F10%2F04%2Fnuclei-openapi%2F&#038;_wpnonce=3966660f3f">Выйти</a>                        </div>
+                    </div>
+                </div>
+                                                    <div class="wpdiscuz-subscribe-bar wpdiscuz-hidden">
+                                                    <form action="https://xakep.ru/wp-admin/admin-ajax.php?action=wpdAddSubscription"
+                                  method="post" id="wpdiscuz-subscribe-form">
+                                <div class="wpdiscuz-subscribe-form-intro">Уведомить о </div>
+                                <div class="wpdiscuz-subscribe-form-option"
+                                     style="width:65%;">
+                                    <select class="wpdiscuz_select" name="wpdiscuzSubscriptionType">
+                                                                                    <option value="post">новых последующих комментариях</option>
+                                                                                                                                <option value="all_comment" >новых ответах на мои комментарии</option>
+                                                                                </select>
+                                </div>
+                                                                <div class="wpdiscuz-subscribe-form-button">
+                                    <input id="wpdiscuz_subscription_button" class="wpd-prim-button wpd_not_clicked"
+                                           type="submit"
+                                           value="›"
+                                           name="wpdiscuz_subscription_button"/>
+                                </div>
+                                <input type="hidden" id="wpdiscuz_subscribe_form_nonce" name="wpdiscuz_subscribe_form_nonce" value="b8d4708d9c" /><input type="hidden" name="_wp_http_referer" value="/2024/10/04/nuclei-openapi/" />                            </form>
+                                                </div>
+                            <div class="wpd-form wpd-form-wrapper wpd-main-form-wrapper" id='wpd-main-form-wrapper-0_0'>
+                                        <form  method="post" enctype="multipart/form-data" data-uploading="false" class="wpd_comm_form wpd_main_comm_form"                >
+                                        <div class="wpd-field-comment">
+                        <div class="wpdiscuz-item wc-field-textarea">
+                            <div class="wpdiscuz-textarea-wrap ">
+                                                                                                        <div class="wpd-avatar">
+                                        <img alt='WineBrute' src='https://secure.gravatar.com/avatar/d81ab53f198585701d0d31286cbf1d0e?s=56&#038;d=retro&#038;r=g' srcset='https://secure.gravatar.com/avatar/d81ab53f198585701d0d31286cbf1d0e?s=112&#038;d=retro&#038;r=g 2x' class='avatar avatar-56 photo' height='56' width='56' loading='lazy' decoding='async'/>                                    </div>
+                                                <div id="wpd-editor-wraper-0_0" style="display: none;">
+                <div id="wpd-editor-char-counter-0_0"
+                     class="wpd-editor-char-counter"></div>
+                <label style="display: none;" for="wc-textarea-0_0">Label</label>
+                <textarea id="wc-textarea-0_0" name="wc_comment"
+                          class="wc_comment wpd-field"></textarea>
+                <div id="wpd-editor-0_0"></div>
+                        <div id="wpd-editor-toolbar-0_0">
+                            <button title="Жирный"
+                        class="ql-bold"  ></button>
+                                <button title="Курсив"
+                        class="ql-italic"  ></button>
+                                <button title="Подчеркивание"
+                        class="ql-underline"  ></button>
+                                <button title="Зачеркивание"
+                        class="ql-strike"  ></button>
+                                <button title="Упорядоченный список"
+                        class="ql-list" value='ordered' ></button>
+                                <button title="Неупорядоченный список"
+                        class="ql-list" value='bullet' ></button>
+                                <button title="Цитата"
+                        class="ql-blockquote"  ></button>
+                                <button title="Блок кода"
+                        class="ql-code-block"  ></button>
+                                <button title="Ссылка"
+                        class="ql-link"  ></button>
+                                <button title="Исходный код"
+                        class="ql-sourcecode"  data-wpde_button_name='sourcecode'>{}</button>
+                                <button title="Спойлер"
+                        class="ql-spoiler"  data-wpde_button_name='spoiler'>[+]</button>
+                            <div class="wpd-editor-buttons-right">
+                            </div>
+        </div>
+                    </div>
+                                        </div>
+                        </div>
+                    </div>
+                    <div class="wpd-form-foot" style='display:none;'>
+                        <div class="wpdiscuz-textarea-foot">
+                                                        <div class="wpdiscuz-button-actions"></div>
+                        </div>
+                                <div class="wpd-form-row">
+                    <div class="wpd-form-col-left">
+                    </div>
+                <div class="wpd-form-col-right">
+                    <div class="wc-field-submit">
+                                                                                    <label class="wpd_label"
+                               wpd-tooltip="Сообщать о всех новых ответах на мои комментарии">
+                            <input id="wc_notification_new_comment-0_0"
+                                   class="wc_notification_new_comment-0_0 wpd_label__checkbox"
+                                   value="comment" type="checkbox"
+                                   name="wpdiscuz_notification_type" />
+                            <span class="wpd_label__text">
+                                <span class="wpd_label__check">
+                                    <i class="fas fa-bell wpdicon wpdicon-on"></i>
+                                    <i class="fas fa-bell-slash wpdicon wpdicon-off"></i>
+                                </span>
+                            </span>
+                        </label>
+                                                                <input id="wpd-field-submit-0_0"
+                   class="wc_comm_submit wpd_not_clicked wpd-prim-button" type="submit"
+                   name="submit" value="Оставить комментарий"
+                   aria-label="Оставить комментарий"/>
+        </div>
+                </div>
+                    <div class="clearfix"></div>
+        </div>
+                            </div>
+                                        <input type="hidden" class="wpdiscuz_unique_id" value="0_0"
+                           name="wpdiscuz_unique_id">
+                    <p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="74424915fb" /></p><p style="display: none !important;"><label>&#916;<textarea name="ak_hp_textarea" cols="45" rows="8" maxlength="100"></textarea></label><input type="hidden" id="ak_js_1" name="ak_js" value="244"/><script>document.getElementById( "ak_js_1" ).setAttribute( "value", ( new Date() ).getTime() );</script></p>                </form>
+                        </div>
+                <div id="wpdiscuz_hidden_secondary_form" style="display: none;">
+                    <div class="wpd-form wpd-form-wrapper wpd-secondary-form-wrapper" id='wpd-secondary-form-wrapper-wpdiscuzuniqueid' style='display: none;'>
+                            <div class="wpd-secondary-forms-social-content"></div>
+                <div class="clearfix"></div>
+                                        <form  method="post" enctype="multipart/form-data" data-uploading="false" class="wpd_comm_form wpd-secondary-form-wrapper"                >
+                                        <div class="wpd-field-comment">
+                        <div class="wpdiscuz-item wc-field-textarea">
+                            <div class="wpdiscuz-textarea-wrap ">
+                                                                                                        <div class="wpd-avatar">
+                                        <img alt='WineBrute' src='https://secure.gravatar.com/avatar/d81ab53f198585701d0d31286cbf1d0e?s=56&#038;d=retro&#038;r=g' srcset='https://secure.gravatar.com/avatar/d81ab53f198585701d0d31286cbf1d0e?s=112&#038;d=retro&#038;r=g 2x' class='avatar avatar-56 photo' height='56' width='56' loading='lazy' decoding='async'/>                                    </div>
+                                                <div id="wpd-editor-wraper-wpdiscuzuniqueid" style="display: none;">
+                <div id="wpd-editor-char-counter-wpdiscuzuniqueid"
+                     class="wpd-editor-char-counter"></div>
+                <label style="display: none;" for="wc-textarea-wpdiscuzuniqueid">Label</label>
+                <textarea id="wc-textarea-wpdiscuzuniqueid" name="wc_comment"
+                          class="wc_comment wpd-field"></textarea>
+                <div id="wpd-editor-wpdiscuzuniqueid"></div>
+                        <div id="wpd-editor-toolbar-wpdiscuzuniqueid">
+                            <button title="Жирный"
+                        class="ql-bold"  ></button>
+                                <button title="Курсив"
+                        class="ql-italic"  ></button>
+                                <button title="Подчеркивание"
+                        class="ql-underline"  ></button>
+                                <button title="Зачеркивание"
+                        class="ql-strike"  ></button>
+                                <button title="Упорядоченный список"
+                        class="ql-list" value='ordered' ></button>
+                                <button title="Неупорядоченный список"
+                        class="ql-list" value='bullet' ></button>
+                                <button title="Цитата"
+                        class="ql-blockquote"  ></button>
+                                <button title="Блок кода"
+                        class="ql-code-block"  ></button>
+                                <button title="Ссылка"
+                        class="ql-link"  ></button>
+                                <button title="Исходный код"
+                        class="ql-sourcecode"  data-wpde_button_name='sourcecode'>{}</button>
+                                <button title="Спойлер"
+                        class="ql-spoiler"  data-wpde_button_name='spoiler'>[+]</button>
+                            <div class="wpd-editor-buttons-right">
+                            </div>
+        </div>
+                    </div>
+                                        </div>
+                        </div>
+                    </div>
+                    <div class="wpd-form-foot" style='display:none;'>
+                        <div class="wpdiscuz-textarea-foot">
+                                                        <div class="wpdiscuz-button-actions"></div>
+                        </div>
+                                <div class="wpd-form-row">
+                    <div class="wpd-form-col-left">
+                    </div>
+                <div class="wpd-form-col-right">
+                    <div class="wc-field-submit">
+                                                                                    <label class="wpd_label"
+                               wpd-tooltip="Сообщать о всех новых ответах на мои комментарии">
+                            <input id="wc_notification_new_comment-wpdiscuzuniqueid"
+                                   class="wc_notification_new_comment-wpdiscuzuniqueid wpd_label__checkbox"
+                                   value="comment" type="checkbox"
+                                   name="wpdiscuz_notification_type" />
+                            <span class="wpd_label__text">
+                                <span class="wpd_label__check">
+                                    <i class="fas fa-bell wpdicon wpdicon-on"></i>
+                                    <i class="fas fa-bell-slash wpdicon wpdicon-off"></i>
+                                </span>
+                            </span>
+                        </label>
+                                                                <input id="wpd-field-submit-wpdiscuzuniqueid"
+                   class="wc_comm_submit wpd_not_clicked wpd-prim-button" type="submit"
+                   name="submit" value="Оставить комментарий"
+                   aria-label="Оставить комментарий"/>
+        </div>
+                </div>
+                    <div class="clearfix"></div>
+        </div>
+                            </div>
+                                        <input type="hidden" class="wpdiscuz_unique_id" value="wpdiscuzuniqueid"
+                           name="wpdiscuz_unique_id">
+                    <p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="74424915fb" /></p><p style="display: none !important;"><label>&#916;<textarea name="ak_hp_textarea" cols="45" rows="8" maxlength="100"></textarea></label><input type="hidden" id="ak_js_2" name="ak_js" value="210"/><script>document.getElementById( "ak_js_2" ).setAttribute( "value", ( new Date() ).getTime() );</script></p>                </form>
+                        </div>
+                </div>
+                    </div>
+                        <div id="wpd-threads" class="wpd-thread-wrapper">
+                <div class="wpd-thread-head">
+                    <div class="wpd-thread-info "
+                         data-comments-count="1">
+                        <span class='wpdtc' title='1'>1</span> Комментарий                    </div>
+                    <div class='wpdiscuz-user-settings wpd-info wpd-not-clicked' wpd-tooltip='Мои контент и настройки'  wpd-tooltip-position='right'><i class='fas fa-user-cog'></i></div>                    <div class="wpd-space"></div>
+                    <div class="wpd-thread-filter">
+                                                    <div class="wpd-filter wpdf-reacted wpd_not_clicked"
+                                 wpd-tooltip="Самый популярный комментарий ">
+                                <i class="fas fa-bolt"></i></div>
+                                                        <div class="wpd-filter wpdf-hottest wpd_not_clicked"
+                                 wpd-tooltip="Цепочка популярного комментария">
+                                <i class="fas fa-fire"></i></div>
+                                                        <div class="wpd-filter wpdf-sorting">
+                                                                        <span class="wpdiscuz-sort-button wpdiscuz-date-sort-asc wpdiscuz-sort-button-active"
+                                              data-sorting="oldest">Старые</span>
+                                                                        <i class="fas fa-sort-down"></i>
+                                <div class="wpdiscuz-sort-buttons">
+                                                                            <span class="wpdiscuz-sort-button wpdiscuz-date-sort-desc"
+                                              data-sorting="newest">Новые</span>
+                                                                                <span class="wpdiscuz-sort-button wpdiscuz-vote-sort-up"
+                                              data-sorting="by_vote">Популярные</span>
+                                                                        </div>
+                            </div>
+                                                </div>
+                </div>
+                <div class="wpd-comment-info-bar">
+                    <div class="wpd-current-view"><i
+                                class="fas fa-quote-left"></i> Межтекстовые Отзывы                     </div>
+                    <div class="wpd-filter-view-all">Посмотреть все комментарии</div>
+                </div>
+                                <div class="wpd-thread-list">
+                                        <div class="wpdiscuz-comment-pagination" style='display:none;'>
+                                                    <div class="wpd-load-more-submit-wrap">
+                                <button name="submit" data-lastparentid="0"
+                                        class="wpd-load-more-submit wpd-loaded wpd-prim-button">
+                                    Загрузить ещё комментарии                                </button>
+                            </div>
+                            <span id="wpdiscuzHasMoreComments" data-is_show_load_more="0"></span>
+                                                </div>
+                </div>
+            </div>
+                </div>
+        </div>
+    <div id="wpdiscuz-loading-bar"
+         class="wpdiscuz-loading-bar-auth"></div>
+    <div id="wpdiscuz-comment-message"
+         class="wpdiscuz-comment-message-auth"></div>
+    </div>
+
+      </div>
+</div>
+						</div>
+						                        			                        <div class="bdaia-footer">
+	                        
+		<div class="bdaia-footer-widgets" style ="background-color:#32393D;">
+		<div class="bd-container">
+			<div class="bdaia-footer-widgets-area footer-col-three">
+
+				
+				
+				
+				
+			</div>
+		</div>
+	</div><!--Widgets/-->
+
+	                        	                        <div class="bdaia-footer-area" style ="background-color:#23282D;">
+		                        <div class="bd-container" style="font-size:13px">
+
+															<div class=footer-col-two>
+															  <div class=footer-widget-inner>
+															         Вопросы по&nbsp;материалам и подписке: <a href="mailto:support@glc.ru">support@glc.ru</a>
+															    <br/>Отдел рекламы и&nbsp;спецпроектов: <a href="mailto:yakovleva.a@glc.ru">yakovleva.a@glc.ru</a>
+															    <br/>Контент&nbsp;<strong>18+</strong>
+                                  <br/><br/>
+                                  <div style="font-size:95%"><a href=https://qrator.net/ru/ target=_blank rel=nofollow><img src=https://xakep.ru/wp-content/uploads/2017/10/300px-Qrator_LOGO.png width=100 alt=Qrator style="float:left;margin: 0 10px 0 0" /></a> Сайт защищен Qrator&nbsp;—<br/>самой забойной защитой от&nbsp;DDoS в&nbsp;мире</div>
+															  </div>
+															  <div class=footer-widget-inner style="text-align:right">
+															         <a href="/about/">Подписка для физлиц</a>
+                                  <br/><a href="https://xakep.shop/corporate">Подписка для юрлиц</a>
+															    <br/><a href="https://xakep.shop/advert">Реклама на «Хакере»</a>
+                                  <!-- <br/><a href="/offer/">Авторский договор</a> -->
+															    <br/><a href="/contact/">Контакты</a>
+                                  															  </div>
+															</div>
+
+		                        </div>
+	                        </div>
+                        </div><!--.bdaia-footer/-->
+                    </div>
+                </div>
+            </div><!-- #page/-->
+        </div><!-- .page-outer/-->
+        <span id='wpdUserContentInfoAnchor' style='display:none;' rel='#wpdUserContentInfo' data-wpd-lity>wpDiscuz</span><div id='wpdUserContentInfo' style='overflow:auto;background:#FDFDF6;padding:20px;width:600px;max-width:100%;border-radius:6px;' class='lity-hide'></div><div id='wpd-editor-source-code-wrapper-bg'></div><div id='wpd-editor-source-code-wrapper'><textarea id='wpd-editor-source-code'></textarea><button id='wpd-insert-source-code'>Insert</button><input type='hidden' id='wpd-editor-uid' /></div><div id="reading-position-indicator"></div>
+<script>
+    </script><script type='text/javascript' src='https://xakep.ru/wp-content/themes/woohoo/js/widget-ajax.js' id='woohoo-wboxs-ajax-js-js'></script>
+<script type='text/javascript' id='woohoo-post-like-js-extra'>
+/* <![CDATA[ */
+var ajax_var = {"url":"https:\/\/xakep.ru\/wp-admin\/admin-ajax.php","nonce":"5951b807f2"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/themes/woohoo/js/post-like.js' id='woohoo-post-like-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/themes/woohoo/framework/shorty/js/blocks.js' id='woohoo_blocks_ajax_js-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/plugins/prettify-code-syntax/javascripts/prettify.js' id='prettify-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/plugins/prettify-code-syntax/javascripts/lang-css.js' id='prettify-css-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/plugins/prettify-code-syntax/javascripts/lang-sql.js' id='prettify-sql-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/plugins/prettify-code-syntax/javascripts/lang-yaml.js' id='prettify-yaml-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/plugins/prettify-code-syntax/javascripts/lang-vb.js' id='prettify-vb-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/plugins/prettify-code-syntax/javascripts/lang-clj.js' id='prettify-clj-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/plugins/prettify-code-syntax/javascripts/lang-erlang.js' id='prettify-erlang-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/plugins/prettify-code-syntax/javascripts/lang-go.js' id='prettify-go-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/plugins/prettify-code-syntax/javascripts/lang-hs.js' id='prettify-hs-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/plugins/prettify-code-syntax/javascripts/lang-lua.js' id='prettify-lua-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/plugins/prettify-code-syntax/javascripts/lang-lisp.js' id='prettify-lisp-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/plugins/prettify-code-syntax/javascripts/lang-dart.js' id='prettify-dart-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/plugins/prettify-code-syntax/javascripts/lang-pascal.js' id='prettify-pascal-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/plugins/prettify-code-syntax/javascripts/lang-r.js' id='prettify-r-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/plugins/prettify-code-syntax/javascripts/load.js' id='prettify-load-js'></script>
+<script type='text/javascript' id='wp-polls-js-extra'>
+/* <![CDATA[ */
+var pollsL10n = {"ajax_url":"https:\/\/xakep.ru\/wp-admin\/admin-ajax.php","text_wait":"\u0412\u0430\u0448 \u043f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0439 \u0437\u0430\u043f\u0440\u043e\u0441 \u0435\u0449\u0435 \u043e\u0431\u0440\u0430\u0431\u0430\u0442\u044b\u0432\u0430\u0435\u0442\u0441\u044f. \u041f\u043e\u0436\u0430\u043b\u0443\u0439\u0441\u0442\u0430 \u043f\u043e\u0434\u043e\u0436\u0434\u0438\u0442\u0435 ...","text_valid":"\u041f\u043e\u0436\u0430\u043b\u0443\u0439\u0441\u0442\u0430 \u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043d\u043e \u0432\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u043e\u0442\u0432\u0435\u0442.","text_multiple":"\u041c\u0430\u043a\u0441\u0438\u043c\u0430\u043b\u044c\u043d\u043e \u0434\u043e\u043f\u0443\u0441\u0442\u0438\u043c\u043e\u0435 \u0447\u0438\u0441\u043b\u043e \u0432\u0430\u0440\u0438\u0430\u043d\u0442\u043e\u0432:","show_loading":"1","show_fading":"0"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/plugins/wp-polls/polls-js.js' id='wp-polls-js'></script>
+<script type='text/javascript' id='wpdiscuz-combo-js-js-extra'>
+/* <![CDATA[ */
+var wpdiscuzAjaxObj = {"wc_hide_replies_text":"\u0421\u043f\u0440\u044f\u0442\u0430\u0442\u044c \u043e\u0442\u0432\u0435\u0442\u044b","wc_show_replies_text":"\u041f\u0440\u043e\u0441\u043c\u043e\u0442\u0440 \u043e\u0442\u0432\u0435\u0442\u043e\u0432","wc_msg_required_fields":"\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u0435 \u043d\u0435\u043e\u0431\u0445\u043e\u0434\u0438\u043c\u044b\u0435 \u043f\u043e\u043b\u044f","wc_invalid_field":"\u041d\u0435\u043a\u043e\u0442\u043e\u0440\u044b\u0435 \u043f\u043e\u043b\u044f \u0437\u0430\u043f\u043e\u043b\u043d\u0435\u043d\u044b \u043d\u0435\u0432\u0435\u0440\u043d\u043e","wc_error_empty_text":"\u043f\u043e\u0436\u0430\u043b\u0443\u0439\u0441\u0442\u0430, \u0437\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u0435 \u044d\u0442\u043e \u043f\u043e\u043b\u0435, \u0447\u0442\u043e\u0431\u044b \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0438\u0440\u043e\u0432\u0430\u0442\u044c","wc_error_url_text":"url \u043d\u0435\u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0439","wc_error_email_text":"\u0430\u0434\u0440\u0435\u0441 \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u043d\u043d\u043e\u0439 \u043f\u043e\u0447\u0442\u044b \u043d\u0435\u0432\u0435\u0440\u0435\u043d","wc_invalid_captcha":"\u041d\u0435\u0432\u0435\u0440\u043d\u043e \u0432\u0432\u0435\u0434\u0435\u043d \u043a\u043e\u0434","wc_login_to_vote":"\u0412\u044b \u0434\u043e\u043b\u0436\u043d\u044b \u0432\u043e\u0439\u0442\u0438 , \u0447\u0442\u043e\u0431\u044b \u043f\u0440\u043e\u0433\u043e\u043b\u043e\u0441\u043e\u0432\u0430\u0442\u044c","wc_deny_voting_from_same_ip":"\u0412\u044b \u043d\u0435 \u043c\u043e\u0436\u0435\u0442\u0435 \u0433\u043e\u043b\u043e\u0441\u043e\u0432\u0430\u0442\u044c \u0437\u0430 \u044d\u0442\u043e\u0442 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439","wc_self_vote":"\u0412\u044b \u043d\u0435 \u043c\u043e\u0436\u0435\u0442\u0435 \u0433\u043e\u043b\u043e\u0441\u043e\u0432\u0430\u0442\u044c \u0437\u0430 \u0441\u0432\u043e\u0439 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439","wc_vote_only_one_time":"\u0412\u044b \u0443\u0436\u0435 \u0433\u043e\u043b\u043e\u0441\u043e\u0432\u0430\u043b\u0438 \u0437\u0430 \u044d\u0442\u043e\u0442 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439","wc_voting_error":"\u041e\u0448\u0438\u0431\u043a\u0430 \u0433\u043e\u043b\u043e\u0441\u043e\u0432\u0430\u043d\u0438\u044f","wc_comment_edit_not_possible":"\u0418\u0437\u0432\u0438\u043d\u0438\u0442\u0435, \u044d\u0442\u043e\u0442 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439 \u0431\u043e\u043b\u044c\u0448\u0435 \u043d\u0435\u043b\u044c\u0437\u044f \u0440\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u043e\u0432\u0430\u0442\u044c","wc_comment_not_updated":"\u0418\u0437\u0432\u0438\u043d\u0438\u0442\u0435, \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439 \u043d\u0435 \u0431\u044b\u043b \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d","wc_comment_not_edited":"\u0412\u044b \u043d\u0435 \u0441\u0434\u0435\u043b\u0430\u043b\u0438 \u043d\u0438\u043a\u0430\u043a\u0438\u0445 \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u0439","wc_msg_input_min_length":"\u0412\u0432\u043e\u0434 \u0441\u043b\u0438\u0448\u043a\u043e\u043c \u043a\u043e\u0440\u043e\u0442\u043a\u0438\u0439","wc_msg_input_max_length":"\u0412\u0432\u043e\u0434 \u0441\u043b\u0438\u0448\u043a\u043e\u043c \u0434\u043b\u0438\u043d\u043d\u044b\u0439","wc_spoiler_title":"\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u0441\u043f\u043e\u0439\u043b\u0435\u0440\u0430","wc_cannot_rate_again":"\u0412\u044b \u043d\u0435 \u043c\u043e\u0436\u0435\u0442\u0435 \u0441\u043d\u043e\u0432\u0430 \u043e\u0446\u0435\u043d\u0438\u0442\u044c","wc_not_allowed_to_rate":"\u0412\u0430\u043c \u043d\u0435 \u0440\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u043e \u0441\u0442\u0430\u0432\u0438\u0442\u044c \u0437\u0434\u0435\u0441\u044c \u043e\u0446\u0435\u043d\u043a\u0443","wc_follow_user":"\u041f\u043e\u0434\u043f\u0438\u0441\u0430\u0442\u044c\u0441\u044f \u043d\u0430 \u044d\u0442\u043e\u0433\u043e \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f","wc_unfollow_user":"\u041e\u0442\u043f\u0438\u0441\u0430\u0442\u044c\u0441\u044f \u043e\u0442 \u044d\u0442\u043e\u0433\u043e \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f","wc_follow_success":"\u0412\u044b \u043f\u043e\u0434\u043f\u0438\u0441\u0430\u043b\u0438\u0441\u044c \u043d\u0430 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0438 \u044d\u0442\u043e\u0433\u043e \u0430\u0432\u0442\u043e\u0440\u0430","wc_follow_canceled":"\u0412\u044b \u043f\u0440\u0438\u043e\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u043b\u0438 \u043f\u043e\u0434\u043f\u0438\u0441\u043a\u0443 \u043d\u0430 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0438 \u044d\u0442\u043e\u0433\u043e \u0430\u0432\u0442\u043e\u0440\u0430.","wc_follow_email_confirm":"\u041f\u043e\u0436\u0430\u043b\u0443\u0439\u0441\u0442\u0430, \u043f\u0440\u043e\u0432\u0435\u0440\u044c\u0442\u0435 \u0441\u0432\u043e\u0439 email \u0438 \u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u0435 \u0437\u0430\u043f\u0440\u043e\u0441 \u043d\u0430 \u043f\u043e\u0434\u043f\u0438\u0441\u043a\u0443.","wc_follow_email_confirm_fail":"\u041e\u0447\u0435\u043d\u044c \u0436\u0430\u043b\u044c, \u043d\u043e \u043c\u044b \u043d\u0435 \u043c\u043e\u0436\u0435\u043c \u043e\u0442\u043f\u0440\u0430\u0432\u0438\u0442\u044c \u043f\u0438\u0441\u044c\u043c\u043e \u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043d\u0438\u044f.","wc_follow_login_to_follow":"\u0410\u0432\u0442\u043e\u0440\u0438\u0437\u0443\u0439\u0442\u0435\u0441\u044c \u0447\u0442\u043e\u0431\u044b \u043f\u043e\u0434\u043f\u0438\u0441\u044b\u0432\u0430\u0442\u044c\u0441\u044f \u043d\u0430 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0435\u0439.","wc_follow_impossible":"\u041e\u0447\u0435\u043d\u044c \u0436\u0430\u043b\u044c, \u043d\u043e \u0432\u044b \u043d\u0435 \u043c\u043e\u0436\u0435\u0442\u0435 \u043f\u043e\u0434\u043f\u0438\u0441\u0430\u0442\u044c\u0441\u044f \u043d\u0430 \u044d\u0442\u043e\u0433\u043e \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f.","wc_follow_not_added":"\u041f\u043e\u0434\u043f\u0438\u0441\u0430\u0442\u044c\u0441\u044f \u043d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c. \u041f\u043e\u0436\u0430\u043b\u0443\u0439\u0441\u0442\u0430, \u043f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435 \u043f\u043e\u0437\u0436\u0435.","is_user_logged_in":"1","commentListLoadType":"0","commentListUpdateType":"0","commentListUpdateTimer":"30","liveUpdateGuests":"0","wordpressThreadCommentsDepth":"10","wordpressIsPaginate":"","commentTextMaxLength":"0","replyTextMaxLength":"0","commentTextMinLength":"1","replyTextMinLength":"1","storeCommenterData":"100000","socialLoginAgreementCheckbox":"1","enableFbLogin":"0","fbUseOAuth2":"0","enableFbShare":"0","facebookAppID":"","facebookUseOAuth2":"0","enableGoogleLogin":"0","googleClientID":"","googleClientSecret":"","cookiehash":"95a2ce14874d444647baa643165aaf19","isLoadOnlyParentComments":"0","scrollToComment":"1","commentFormView":"collapsed","enableDropAnimation":"1","isNativeAjaxEnabled":"1","enableBubble":"0","bubbleLiveUpdate":"0","bubbleHintTimeout":"600","bubbleHintHideTimeout":"10","cookieHideBubbleHint":"wpdiscuz_hide_bubble_hint","bubbleHintShowOnce":"1","bubbleHintCookieExpires":"7","bubbleShowNewCommentMessage":"0","bubbleLocation":"content_left","firstLoadWithAjax":"1","wc_copied_to_clipboard":"\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d \u0432 \u0431\u0443\u0444\u0435\u0440 \u043e\u0431\u043c\u0435\u043d\u0430.","inlineFeedbackAttractionType":"blink","loadRichEditor":"1","wpDiscuzReCaptchaSK":"6LddLaYZAAAAAKCc3QwxZAcV2RLOhR09NcYPSlZH","wpDiscuzReCaptchaTheme":"light","wpDiscuzReCaptchaVersion":"2.0","wc_captcha_show_for_guest":"1","wc_captcha_show_for_members":"0","wpDiscuzIsShowOnSubscribeForm":"0","wmuEnabled":"0","wmuInput":"wmu_files","wmuMaxFileCount":"1","wmuMaxFileSize":"2097152","wmuPostMaxSize":"529530880","wmuIsLightbox":"1","wmuMimeTypes":{"jpg":"image\/jpeg","jpeg":"image\/jpeg","jpe":"image\/jpeg","gif":"image\/gif","png":"image\/png"},"wmuPhraseConfirmDelete":"\u0412\u044b \u0443\u0432\u0435\u0440\u0435\u043d\u044b, \u0447\u0442\u043e \u0445\u043e\u0442\u0438\u0442\u0435 \u0443\u0434\u0430\u043b\u0438\u0442\u044c \u044d\u0442\u043e \u0432\u043b\u043e\u0436\u0435\u043d\u0438\u0435?","wmuPhraseNotAllowedFile":"\u041d\u0435\u0434\u043e\u043f\u0443\u0441\u0442\u0438\u043c\u044b\u0439 \u0442\u0438\u043f \u0444\u0430\u0439\u043b\u0430","wmuPhraseMaxFileCount":"\u041c\u0430\u043a\u0441\u0438\u043c\u0430\u043b\u044c\u043d\u043e\u0435 \u043a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e \u0437\u0430\u0433\u0440\u0443\u0436\u0430\u0435\u043c\u044b\u0445 \u0444\u0430\u0439\u043b\u043e\u0432 1","wmuPhraseMaxFileSize":"\u041c\u0430\u043a\u0441\u0438\u043c\u0430\u043b\u044c\u043d\u044b\u0439 \u0440\u0430\u0437\u043c\u0435\u0440 \u0437\u0430\u0433\u0440\u0443\u0436\u0430\u0435\u043c\u043e\u0433\u043e \u0444\u0430\u0439\u043b\u0430 2MB","wmuPhrasePostMaxSize":"\u041c\u0430\u043a\u0441\u0438\u043c\u0430\u043b\u044c\u043d\u044b\u0439 \u0440\u0430\u0437\u043c\u0435\u0440 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u044f 505MB","wmuPhraseDoingUpload":"Uploading in progress! Please wait.","msgEmptyFile":"File is empty. Please upload something more substantial. This error could also be caused by uploads being disabled in your php.ini or by post_max_size being defined as smaller than upload_max_filesize in php.ini.","msgPostIdNotExists":"ID \u0437\u0430\u043f\u0438\u0441\u0438 \u043d\u0435 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u0435\u0442","msgUploadingNotAllowed":"\u0418\u0437\u0432\u0438\u043d\u0438\u0442\u0435, \u0437\u0430\u0433\u0440\u0443\u0437\u043a\u0430 \u0434\u043b\u044f \u044d\u0442\u043e\u0433\u043e \u043f\u043e\u0441\u0442\u0430 \u0437\u0430\u043f\u0440\u0435\u0449\u0435\u043d\u0430","msgPermissionDenied":"\u0423 \u0432\u0430\u0441 \u043d\u0435\u0434\u043e\u0441\u0442\u0430\u0442\u043e\u0447\u043d\u043e \u043f\u0440\u0430\u0432 \u0434\u043b\u044f \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u0438\u044f \u044d\u0442\u043e\u0433\u043e \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044f","wmuKeyImages":"images","wmuSingleImageWidth":"auto","wmuSingleImageHeight":"200","version":"7.6.15","wc_post_id":"485398","isCookiesEnabled":"1","loadLastCommentId":"0","dataFilterCallbacks":[],"phraseFilters":[],"scrollSize":"32","is_email_field_required":"1","url":"https:\/\/xakep.ru\/wp-admin\/admin-ajax.php","customAjaxUrl":"https:\/\/xakep.ru\/wp-content\/plugins\/wpdiscuz\/utils\/ajax\/wpdiscuz-ajax.php","bubbleUpdateUrl":"https:\/\/xakep.ru\/wp-json\/wpdiscuz\/v1\/update","restNonce":"8ed4dce5d5"};
+var wpdiscuzUCObj = {"msgConfirmDeleteComment":"\u0412\u044b \u0445\u043e\u0442\u0438\u0442\u0435 \u0443\u0434\u0430\u043b\u0438\u0442\u044c \u044d\u0442\u043e\u0442 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439?","msgConfirmCancelSubscription":"\u0412\u044b \u0445\u043e\u0442\u0438\u0442\u0435 \u043e\u0442\u043c\u0435\u043d\u0438\u0442\u044c \u044d\u0442\u0443 \u043f\u043e\u0434\u043f\u0438\u0441\u043a\u0443?","msgConfirmCancelFollow":"\u0423\u0432\u0435\u0440\u0435\u043d\u044b, \u0447\u0442\u043e \u0445\u043e\u0442\u0438\u0442\u0435 \u043e\u0442\u043c\u0435\u043d\u0438\u0442\u044c \u043f\u043e\u0434\u043f\u0438\u0441\u043a\u0443?","additionalTab":"0"};
+/* ]]> */
+</script>
+<script type='text/javascript' id='wpdiscuz-combo-js-js-before'>
+        var wpdiscuzEditorOptions = {
+        modules: {
+        toolbar: "",
+        counter: {
+        uniqueID: "",
+        commentmaxcount : 0,
+        replymaxcount : 0,
+        commentmincount : 1,
+        replymincount : 1,
+        },
+                },
+        wc_be_the_first_text: "\u041f\u043e\u0434\u0435\u043b\u0438\u0442\u0435\u0441\u044c \u0441\u0432\u043e\u0438\u043c \u043c\u043d\u0435\u043d\u0438\u0435\u043c",
+        wc_comment_join_text: "\u041f\u0440\u0438\u0441\u043e\u0435\u0434\u0438\u043d\u0438\u0442\u044c\u0441\u044f \u043a \u043e\u0431\u0441\u0443\u0436\u0434\u0435\u043d\u0438\u044e",
+        theme: 'snow',
+        debug: 'error'
+        };
+        
+</script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/plugins/wpdiscuz/assets/js/wpdiscuz-combo.min.js' id='wpdiscuz-combo-js-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/themes/woohoo/js/matchMedia.js' id='woohoo-match-media-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/themes/woohoo/js/matchMedia.addListener.js' id='woohoo-match-media-add-listener-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/themes/woohoo/js/jquery.placeholder.js' id='woohoo-placeholder-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/themes/woohoo/js/theia-sticky.js' id='woohoo-theia-sticky-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/themes/woohoo/js/enquire.min.js' id='woohoo-enquire-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/themes/woohoo/js/min.js' id='woohoo-min-js'></script>
+<script type='text/javascript' id='woohoo-main-js-extra'>
+/* <![CDATA[ */
+var bd = "{\"is_singular\":true,\"bd_lazyload\":false,\"mobile_topmenu\":false,\"sticky_sidebar\":false,\"post_reading_position_indicator\":\"1\"}";
+/* ]]> */
+</script>
+<script type='text/javascript' async="async" src='https://xakep.ru/wp-content/themes/woohoo/js/main.js' id='woohoo-main-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-includes/js/comment-reply.min.js' id='comment-reply-js'></script>
+<script type='text/javascript' src='https://xakep.ru/wp-content/themes/woohoo/js/search.js' id='bd-search-js'></script>
+<script defer type='text/javascript' src='https://xakep.ru/wp-content/plugins/akismet/_inc/akismet-frontend.js' id='akismet-frontend-js'></script>
+  <link rel="stylesheet" href="/wp-content/themes/woohoo/js/tablesaw/tablesaw.css">
+  <script src="/wp-content/themes/woohoo/js/tablesaw/tablesaw.jquery.js"></script>
+  <script src="/wp-content/themes/woohoo/js/tablesaw/tablesaw-init.js"></script>
+
+<script type='text/javascript'>(function($){
+  console.log("$$$$$$$$$$$$$ $$$$$$$$$$$$$\n          $$$ $$$\n          $$$ $$$  $$$$$$$$$$$$$ $$$     $$$  $$$$$$$$$$$$$ $$$$$$$$$$$$$\n                   $$$       $$$ $$$     $$$  $$$$$$$       $$$       $$$\n          $$$ $$$  $$$$$$$$$$$$$ $$$$$$$$$$$$ $$$           $$$$$$$$$$$$$\n          $$$ $$$  $$$       $$$ $$$      $$$ $$$$$$$$$$$$$ $$$\n$$$$$$$$$$$$$ $$$$$$$$$$$$$\n\nХочешь прославиться, заработать и иметь бесплатную подписку? Пиши в «Хакер»!\nПодробнее: https://xakep.ru/new-authors/");
+  $('article.xmd figure:not(.video)').each(function(){
+    if($(this).find('a').length == 0){
+      var img = $(this).find('img').attr('src');
+      $(this).wrapInner('<a href="'+img+'" target=_blank class="foobox"></a>');
+    }
+  });
+  $('.bdaia-post-content>pre').addClass('prettyprint');
+  $('.wp-polls-form .wp-polls-ul input').on('change', function(){$(this).parents('form').find('input[name=vote]').click();})
+  $.each($('#bookmark'), function(i, el){
+    var bookmark = $(el);
+    var pid = bookmark.data('pid');
+    $.get('/wp-admin/admin-ajax.php?action=xakep_bookmark&pid='+pid, function(res){
+      bookmark.html(res);
+    });
+    bookmark.on('click', function(){
+      $.get('/wp-admin/admin-ajax.php?action=xakep_bookmark&set=book&pid='+pid, function(res){
+        bookmark.html(res);
+      });
+    });
+  });
+}(jQuery));</script>
+<div style="position:fixed;left:-9999px;bottom:-9999px;opacity:0">
+  <!-- Код тега ремаркетинга Google -->
+  <script type="text/javascript">
+      /* <![CDATA[ */
+      var google_conversion_id = 943782719;
+      var google_custom_params = window.google_tag_params;
+      var google_remarketing_only = true;
+      /* ]]> */
+  </script>
+  <script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js">
+  </script>
+  <noscript>
+      <div style="display:inline;">
+         <img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/943782719/?value=0&amp;guid=ON&amp;script=0"/>
+      </div>
+  </noscript>
+
+</div>
+    
+	<!-- Enkod popup API -->
+	<script type="text/javascript">
+		var script = document.createElement('script');
+		script.type = 'text/javascript';
+		script.src = '//cdn.enkod.ru/script/enpop.min.js';
+		script.async = true;
+		var first = document.getElementsByTagName('script')[0];
+		first.parentNode.insertBefore(script, first);
+		var enKodBox = window.enKodBox = window.enKodBox || {};    
+		var ekEvents = window.ekEvents || [];
+		enKodBox['token'] = 'xakep';
+	</script>
+	<script type="text/javascript">
+		ekEvents.push('pageOpen')
+	</script>
+	<!-- Enkod popup API end -->
+	
+	</body>
+</html><!--
+Performance optimized by Redis Object Cache. Learn more: https://wprediscache.com
+
+Получено 3930 объектов (698 КБ) от Redis через Predis (v2.0.3).
+-->
